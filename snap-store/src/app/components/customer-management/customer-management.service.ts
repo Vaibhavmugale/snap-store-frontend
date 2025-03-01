@@ -6,36 +6,39 @@ import { catchError, tap } from 'rxjs/operators';
 import { ApiConfigrationService } from '../../api-configration/api-configration';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class ProductService implements Resolve<any> {
+export class CustomerManagementService implements Resolve<any> {
   private apiUrl: string;
-  private productSubject = new BehaviorSubject<any[]>([]);
-  products$ = this.productSubject.asObservable();
+  private customerSubject = new BehaviorSubject<any[]>([]);
+  customers$ = this.customerSubject.asObservable();
   userId:number=0;
 
   constructor(private http: HttpClient, private apiConfig: ApiConfigrationService) {
     this.apiUrl = this.apiConfig.apiUrl;
+   
   }
+
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     const user = localStorage.getItem('user');
     if (user) {
       const User = JSON.parse(user);
       this.userId = User?.id;
     }
-    return this.fetchProducts();
+    return this.fetchCustomer();
+    
   }
 
-  fetchProducts(): Observable<any> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/product/getproduct/${this.userId}`).pipe(
-      tap((data) => this.productSubject.next(data ?? [])),
-      catchError((error) => {
-        console.error("Error fetching products:", error);
-        this.productSubject.next([]); 
-        return of([]); 
-      })
-    );
-  }
-  
-    
-}
+  fetchCustomer(): Observable<any> {
+     return this.http.get<any[]>(`${this.apiUrl}/api/customer/getcustomer/${this.userId}`).pipe(
+       tap((data) => this.customerSubject.next(data ?? [])),
+       catchError((error) => {
+         console.error("Error fetching products:", error);
+         this.customerSubject.next([]); 
+         return of([]); 
+       })
+     );
+   }
+   
+     
+ }

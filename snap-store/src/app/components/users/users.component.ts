@@ -13,15 +13,8 @@ import { UsersService } from './users.service';
 })
 export class UsersComponent implements OnInit {
   users: any[] = [];
-  filteredProducts: any[] = [];
+  filteredUsers: any[] = [];
   searchText: string = '';
-  selectedBilling: string = '';
-  selectedCustomer: string = '';
-  selectedOrder: string = '';
-
-  billingOptions: string[] = ['Billing 1', 'Billing 2', 'Billing 3'];
-  customerOptions: string[] = ['Customer 1', 'Customer 2', 'Customer 3'];
-  orderOptions: string[] = ['Order 1', 'Order 2', 'Order 3'];
 
   constructor(private _UsersService : UsersService) {}
 
@@ -29,7 +22,7 @@ export class UsersComponent implements OnInit {
     this._UsersService.users$.subscribe({
       next: (data) => {
         this.users = data;
-        this.filteredProducts = data;
+        this.filteredUsers = data;
       },
       error: (err) => {
         console.error('Error fetching users:', err);
@@ -40,7 +33,7 @@ export class UsersComponent implements OnInit {
   filterUser(): void {
     const search = this.searchText.toLowerCase().trim();
     
-    this.filteredProducts = this.users.filter(user => {
+    this.filteredUsers = this.users.filter(user => {
       const userType = user.usertype === 1 ? 'admin' : 'normal user';
   
       return user.userName.toLowerCase().includes(search) ||

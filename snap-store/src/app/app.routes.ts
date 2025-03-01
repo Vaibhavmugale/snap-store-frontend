@@ -11,6 +11,12 @@ import { CreateUserService } from './components/create-user/create-user.service'
 import { AuthGuard } from './guards/auth.guard'; // Import AuthGuard
 import { UsersComponent } from './components/users/users.component';
 import { UsersService } from './components/users/users.service';
+import { BillingManagementComponent } from './components/billing-management/billing-management.component';
+import { BillingManagementService } from './components/billing-management/billing-management.service';
+import { CustomerManagementComponent } from './components/customer-management/customer-management.component';
+import { CustomerManagementService } from './components/customer-management/customer-management.service';
+import { CustomerManagementCreateComponent } from './components/customer-management-create/customer-management-create.component';
+import { CustomerMangementCreateService } from './components/customer-management-create/customer-mangement-create.service';
 
 export const routes: Routes = [
   {   
@@ -45,6 +51,30 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         resolve: { 
           product: CreateProductService
+        }
+      },
+      {
+        path: 'billing', 
+        component: BillingManagementComponent, 
+        canActivate: [AuthGuard],
+        resolve: { 
+          billing: BillingManagementService
+        }
+      },
+      {
+        path: 'customer',
+        component: CustomerManagementComponent, 
+        canActivate: [AuthGuard],
+        resolve: { 
+          customers: CustomerManagementService
+        }
+      },
+      {
+        path: 'customer/:id',
+        component: CustomerManagementCreateComponent, 
+        canActivate: [AuthGuard],
+        resolve: { 
+          customer: CustomerMangementCreateService
         }
       },
       {

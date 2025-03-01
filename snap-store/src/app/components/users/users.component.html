@@ -22,7 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of filteredProducts; let i = index">
+          <tr *ngFor="let user of filteredUsers; let i = index">
             <td [routerLink]="['/user', user.id]">{{ i + 1 }}</td>
             <td style="cursor: pointer;" [routerLink]="['/user', user.id]">{{ user.userName }}</td>
             <td style="cursor: pointer;" [routerLink]="['/user', user.id]">{{ user.emailId }}</td>
@@ -32,7 +32,7 @@
                 <ng-template #normalUser>Normal User</ng-template>
               </td>              
           </tr>
-          <tr *ngIf="filteredProducts.length === 0">
+          <tr *ngIf="filteredUsers.length === 0">
             <td colspan="7" class="text-center">No users found.</td>
           </tr>
       </table>

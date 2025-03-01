@@ -47,8 +47,8 @@ export class LoginComponent {
         console.log("Login successful!", response);
   
         if (response && response.token && response.user) {
-          localStorage.setItem("jwtToken", response.token);  // Store JWT token
-          localStorage.setItem("user", JSON.stringify(response.user)); // Store user data
+          localStorage.setItem("jwtToken", response.token); 
+          localStorage.setItem("user", JSON.stringify(response.user)); 
         } else {
           console.error("Login response does not contain necessary data.");
           return;

@@ -15,7 +15,6 @@ export class LoginService {
   }
 
   login(credentials: any): Observable<any> {
-    console.log("Sending login data:", credentials);
     return this.http.post(`${this.apiUrl}/login`, credentials);
   }
   

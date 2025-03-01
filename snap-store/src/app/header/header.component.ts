@@ -38,12 +38,4 @@ export class HeaderComponent {
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
-
-  // product() {
-  //   this.router.navigateByUrl("/product");
-  // }
-
-  // home() {
-  //   this.router.navigateByUrl("/dashboard");
-  // }
 }
