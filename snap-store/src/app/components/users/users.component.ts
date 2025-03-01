@@ -37,11 +37,19 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  filterProducts(): void {
-    this.filteredProducts = this.users.filter(user =>
-      user.name.toLowerCase().includes(this.searchText.toLowerCase())
-    );
+  filterUser(): void {
+    const search = this.searchText.toLowerCase().trim();
+    
+    this.filteredProducts = this.users.filter(user => {
+      const userType = user.usertype === 1 ? 'admin' : 'normal user';
+  
+      return user.userName.toLowerCase().includes(search) ||
+             user.emailId.toLowerCase().includes(search) ||
+             user.mobileNo.toString().includes(search) ||
+             userType.includes(search);
+    });
   }
+  
 
   publish(): void {
     console.log('Publish clicked!');
