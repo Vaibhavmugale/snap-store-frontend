@@ -16,9 +16,6 @@
                   <div class="col-md-6">
                       <label for="barcode" class="form-label">Barcode</label>
                       <input type="text" id="barcode" class="form-control" formControlName="barcode">
-                      <div *ngIf="productForm.get('barcode')?.invalid && productForm.get('barcode')?.touched" class="text-danger">
-                          Barcode is required.
-                      </div>
                   </div>
 
                   <div class="col-md-6">

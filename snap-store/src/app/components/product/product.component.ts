@@ -38,10 +38,25 @@ export class ProductComponent implements OnInit {
   }
 
   filterProducts(): void {
-    this.filteredProducts = this.products.filter(product =>
-      product.name.toLowerCase().includes(this.searchText.toLowerCase())
-    );
+    const search = this.searchText.toLowerCase().trim();
+    this.filteredProducts = this.products.filter(product => {
+      const formattedCreatedDate = this.formatDate(product.createdDate);
+      const formattedModifiedDate = this.formatDate(product.modifiedDate);
+      return product.productName.toLowerCase().includes(search) ||
+             product.barcode.toLowerCase().includes(search) ||
+             product.price.toString().includes(search) ||
+             product.discount.toString().includes(search) ||
+             formattedCreatedDate.includes(search) ||
+             formattedModifiedDate.includes(search);
+    });
   }
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB');
+  }
+  
+
 
   publish(): void {
     console.log('Publish clicked!');

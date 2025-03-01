@@ -29,7 +29,7 @@ export class CreateProductService {
       this.productData.next(false);
       return of(false);
     }
-    return this.http.get(`${this.apiUrl}/product/getProductById/${this.productId}`).pipe(
+    return this.http.get(`${this.apiUrl}/api/product/getProductById/${this.productId}`).pipe(
       tap(data => this.productData.next(data))
     );
   }
@@ -40,7 +40,7 @@ export class CreateProductService {
 
   addProduct(product: any): Observable<any> {
     console.log("Sending product data:", product);
-    return this.http.post(`${this.apiUrl}/product/add`, product);
+    return this.http.post(`${this.apiUrl}/api/product/add`, product);
 }
 
 }

@@ -72,6 +72,8 @@ export class LoginComponent {
         } else if (error.status === 404) {
           message = "User not found. Please check your email.";
         }
+        localStorage.removeItem('jwtToken');
+         localStorage.removeItem('user');
         this.snackBar.open(message, "ok", {
           duration: 2000,
           verticalPosition: "top",

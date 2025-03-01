@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateProductService } from './create-product.service';
 import { Product } from './create-product.module';
+import { Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-product',
@@ -13,11 +14,19 @@ import { Product } from './create-product.module';
 export class CreateProductComponent implements OnInit {
   productForm!: FormGroup;
   productData!: Product;
+  userId:number=0;
 
   constructor(
     private fb: FormBuilder,
-    private createProductService: CreateProductService
-  ) {}
+    private createProductService: CreateProductService,
+    private router: Router
+  ) {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const User = JSON.parse(user);
+      this.userId = User?.id;
+    }
+  }
 
   ngOnInit(): void {
     this.createProductService.getProductObservable().subscribe(data => {
@@ -36,8 +45,8 @@ export class CreateProductComponent implements OnInit {
       productName: [product.productName, Validators.required],
       description: [product.description],
       barcode: [product.barcode],
-      expireDate: [product.expireDate],
-      manufactureDate: [product.manufactureDate],
+      expireDate: [this.convertToDate(product.expireDate)],
+    manufactureDate: [this.convertToDate(product.manufactureDate)],
       price: [product.price, [Validators.required, Validators.min(0)]],
       discount: [product.discount],
       gst: [product.gst],
@@ -50,6 +59,9 @@ export class CreateProductComponent implements OnInit {
     });
 }
 
+private convertToDate(dateString: string | null): string | null {
+  return dateString ? new Date(dateString).toISOString().split('T')[0] : null;
+}
 
 
 onSubmit(): void {
@@ -59,11 +71,14 @@ onSubmit(): void {
   }
 
   const data = this.productForm.getRawValue();
-
+  data.userId=this.userId;
+  
   this.createProductService.addProduct(data).subscribe({
     next: (response) => {
       alert("Product added successfully!");
+      this.router.navigateByUrl("/product");
     },
+
     error: (error) => {
       console.error("Error adding product:", error);
       alert("Failed to add product. Please try again.");
