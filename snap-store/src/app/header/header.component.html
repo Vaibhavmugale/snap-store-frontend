@@ -1,0 +1,19 @@
+<div class="perent">
+    <div class="sidebar">
+        <div>
+            <h4>Snap Store</h4>
+            <a routerLink="/dashboard">Home</a>
+            <a routerLink="/product">Product</a>
+            <a  *ngIf="userType===1" routerLink="/user">User</a>
+        </div>
+        <div>
+            <p *ngIf="userName">Logged in as: <strong>{{ userName }}</strong></p>
+            <button (click)="logOut()" class="btn btn-danger w-100">Log Off</button>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container mt-4">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
