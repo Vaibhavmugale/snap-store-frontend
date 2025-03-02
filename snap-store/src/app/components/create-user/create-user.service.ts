@@ -12,6 +12,7 @@ export class CreateUserService implements Resolve<any> {
   private apiUrl: string;
   private userData = new BehaviorSubject<any>(null);
   userId:any;
+  usertype:number=0;
 
   constructor(private http: HttpClient, private apiConfig: ApiConfigrationService) {
     this.apiUrl = `${this.apiConfig.apiUrl}/api`;
@@ -19,6 +20,15 @@ export class CreateUserService implements Resolve<any> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     this.userId = route.paramMap.get('id'); 
+    const user = localStorage.getItem('user');
+    if (user) {
+      const User = JSON.parse(user);
+      this.usertype = User?.usertype;
+      if(this.usertype===0){
+        this.userId = User?.id;
+      }
+      
+    }
     return this.getUserById(this.userId);
   }
 
@@ -27,6 +37,7 @@ export class CreateUserService implements Resolve<any> {
       this.userData.next(false);
       return of(false);
     }
+
     return this.http.get(`${this.apiUrl}/user/getUserById/${userId}`).pipe(
       tap(data => this.userData.next(data))
     );

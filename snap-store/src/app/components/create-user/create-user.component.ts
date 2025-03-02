@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateUserService } from './create-user.service';
@@ -8,7 +8,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-create-user',
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule, NgIf],
   templateUrl: './create-user.component.html',
   styleUrl: './create-user.component.css'
 })
@@ -18,13 +18,24 @@ export class CreateUserComponent implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
   isEdit:string='';
+  userType: number =0;
 
 
   constructor(
     private fb: FormBuilder,
     private _createUserService: CreateUserService,
     private router: Router
-  ) {}
+  ) {
+    const user = localStorage.getItem('user');
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        this.userType = parsedUser.usertype;
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }
 
   ngOnInit(): void {
     this._createUserService.getUserObservable().subscribe(data => {

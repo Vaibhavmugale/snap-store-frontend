@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between mb-4">
       <input type="text" class="form-control w-50" id="search" placeholder="Search ..."
       [(ngModel)]="searchText" (input)="filterUser()">
-      <button class="btn btn-primary" routerLink="/user/new">Add</button>
+      <button class="btn btn-primary" *ngIf="userType===1" routerLink="/user/new">Add</button>
     </div>
   
     <div class="row" id="snapList">

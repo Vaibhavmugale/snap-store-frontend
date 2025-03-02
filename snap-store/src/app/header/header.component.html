@@ -6,7 +6,7 @@
             <a routerLink="/product">Product</a>
             <a routerLink="/billing">Billing Management</a>
             <a routerLink="/customer">Customer Management</a>
-            <a  *ngIf="userType===1" routerLink="/user">User</a>
+            <a routerLink="/user">User</a>
         </div>
         <div>
             <p *ngIf="userName">Logged in as: <strong>{{ userName }}</strong></p>
