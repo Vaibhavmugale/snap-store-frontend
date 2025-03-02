@@ -20,16 +20,16 @@ export class CustomerManagementService implements Resolve<any> {
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-    const user = localStorage.getItem('user');
-    if (user) {
-      const User = JSON.parse(user);
-      this.userId = User?.id;
-    }
     return this.fetchCustomer();
     
   }
 
   fetchCustomer(): Observable<any> {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const User = JSON.parse(user);
+      this.userId = User?.id;
+    }
      return this.http.get<any[]>(`${this.apiUrl}/api/customer/getcustomer/${this.userId}`).pipe(
        tap((data) => this.customerSubject.next(data ?? [])),
        catchError((error) => {

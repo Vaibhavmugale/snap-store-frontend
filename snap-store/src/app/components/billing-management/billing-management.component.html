@@ -1,1 +1,56 @@
-<p>billing-management works!</p>
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between mb-4">
+      <h2>Billing</h2>
+    </div>
+  
+    <div class="d-flex justify-content-between mb-4">
+      <input type="text" class="form-control w-50" id="search" placeholder="Search ..."
+        [(ngModel)]="searchText" (input)="filterBillings()">
+      <button class="btn btn-primary" routerLink="/billing/new">Add</button>
+    </div>
+    
+  
+    <div class="row" id="snapList">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Sl No</th>
+            <th>Billing Name</th>
+            <th>Email</th>
+            <th>Phone No</th>
+            <th>Created Date</th>
+            <th>modified Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let billing of filteredBillings; let i = index">
+            <td [routerLink]="['/billing', billing.id]">{{ i + 1 }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.billingName }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.emailId }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.mobileNo }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.createdDate |
+              date:'dd/MM/yyyy' }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.modifiedDate |
+              date:'dd/MM/yyyy' }}</td>
+          </tr>
+          <tr *ngIf="filteredBillings.length === 0">
+            <td colspan="7" class="text-center">No billings found.</td>
+          </tr>
+      </table>
+    </div>
+  
+    <!-- Pagination (Optional) -->
+    <div class="d-flex justify-content-center" style="position: absolute; bottom: 0; width: 75%;">
+      <nav>
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  
+  </div>
