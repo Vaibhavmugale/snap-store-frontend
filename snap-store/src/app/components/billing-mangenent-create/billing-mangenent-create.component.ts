@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BillingMangementCreateService } from './billing-mangement-create.service';
@@ -26,15 +26,24 @@ export class BillingMangenentCreateComponent implements OnInit {
   searchText: string = "";
   customerForm!: FormGroup;
   public modalRef!: NgbModalRef;
+  products: any[] = [];
+  filteredProducts: any[] = [];
+  selectedProductsMap: Map<number, { product: any; quantity: number }> = new Map();
+  selectedProducts: any[] = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 1;
+  
 
   constructor(
     private fb: FormBuilder,
     private createBillingService: BillingMangementCreateService,
     private router: Router,
     private getCustomerService: CustomerManagementService,
-    private getProductService: ProductService,
     private modalService: NgbModal,
-    private createCustomerService: CustomerMangementCreateService
+    private createCustomerService: CustomerMangementCreateService,
+    private productService: ProductService,
+    private cdRef: ChangeDetectorRef
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -55,6 +64,12 @@ export class BillingMangenentCreateComponent implements OnInit {
 
     this.getCustomerService.fetchCustomer().subscribe(resp => {
       this.customers = resp;
+    });
+
+    this.productService.fetchProducts().subscribe(resp => {
+      this.products = resp;
+      this.filteredProducts = resp;
+      this.filterProducts();
     });
 
     this.initCustomerForm();
@@ -111,6 +126,115 @@ export class BillingMangenentCreateComponent implements OnInit {
       mobileNo: ['', Validators.required],
       whatsappNo: ['', Validators.required]
     });
+  }
+
+  updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage);
+  }
+  
+  openProductModal(content: any) {
+    this.modalRef = this.modalService.open(content, { size: 'xl', centered: true });
+  }
+  
+  autoSelectProduct(product: any): void {
+    product.selected = product.quantity > 0;
+  }
+
+  updateSelection(product: any): void {
+    console.log(product)
+    if (product.quantity > product.totalQty) {
+      alert("Entered quantity is more than remaining quantity.");
+      product.quantity = product.totalQty;  
+    }
+  
+    if (product.selected || product.quantity >= 0) {
+      product.selected = true;
+      this.selectedProductsMap.set(product.id, { product, quantity: product.quantity || 1 });
+    } else {
+      product.selected = false;
+      this.selectedProductsMap.delete(product.id);
+    }
+    this.cdRef.markForCheck();
+  }
+
+  removeProduct(product: any): void {
+    console.log(product);
+    this.selectedProducts = this.selectedProducts.filter(p => p.id !== product.id);
+    product.selected = false;
+    product.quantity = 0;
+    this.selectedProductsMap.delete(product.id);
+    const mainProduct = this.products.find(p => p.id === product.id);
+    if (mainProduct) {
+      mainProduct.selected = false;
+      mainProduct.quantity = 0;
+    }
+  }
+  
+  
+  updateProductQuantity(product: any): void {
+    if (product.quantity < 1) {
+      product.quantity = 1;
+    }
+    console.log("Updated quantity:",product);
+  }
+  
+  
+
+toggleSelectAll(event: any): void {
+  const isChecked = event.target.checked;
+  this.filteredProducts.forEach(product => {
+    product.selected = isChecked;
+    product.quantity = isChecked ? 1 : 0;
+
+    if (isChecked) {
+      this.selectedProductsMap.set(product.id, { product, quantity: 1 });
+    } else {
+      this.selectedProductsMap.delete(product.id);
+    }
+  });
+}
+
+addSelectedProducts(): void {
+  this.selectedProducts = Array.from(this.selectedProductsMap.values()).map(entry => ({
+    ...entry.product,
+    quantity: entry.quantity
+  }));
+  console.log("this.selectedProducts",this.selectedProducts)
+  this.modalRef.close();
+}
+
+
+  
+filterProducts(): void {
+  const search = this.searchText.toLowerCase().trim();
+  this.filteredProducts = this.products.filter(product => 
+    product.productName.toLowerCase().includes(search) ||
+    product.barcode.toLowerCase().includes(search) ||
+    product.price.toString().includes(search) ||
+    product.discount.toString().includes(search)
+  );
+  this.currentPage = 1;
+  this.updateTotalPages();
+}
+
+
+changePage(page: number): void {
+  if (page >= 1 && page <= this.totalPages) {
+    this.currentPage = page;
+  }
+}
+
+get paginatedProducts(): any[] {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  const endIndex = startIndex + this.itemsPerPage;
+  return this.filteredProducts.slice(startIndex, endIndex);
+}
+
+
+
+  selectProduct(product: any): void {
+    alert(`Product Selected: ${product.productName}`);
+    this.modalRef.close();
   }
 
   openCustomerModal(content: any): void {

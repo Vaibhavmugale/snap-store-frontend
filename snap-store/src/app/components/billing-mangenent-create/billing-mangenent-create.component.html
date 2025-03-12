@@ -1,6 +1,7 @@
 <div class="col-md-6">
     <label for="customer" class="form-label">Select Customer</label>
     <div class="d-flex">
+        <!-- Select Customer Dropdown -->
         <ng-select 
             [(ngModel)]="selectedCustomer" 
             [items]="customers" 
@@ -9,16 +10,143 @@
             class="flex-grow-1">
         </ng-select>
         <button type="button" class="btn btn-primary ms-2" (click)="openCustomerModal(customerModal)">Add</button>
+        
     </div>
+    </div>
+
+<div class="customer-details col-md-12 mt-3">
+    <h6>Customer Details</h6>
+    <p><strong>Name:</strong> {{ selectedCustomer?.customerName || '' }}</p>
+    <p><strong>Email:</strong> {{ selectedCustomer?.emailId || '' }}</p>
+    <p><strong>Phone:</strong> {{ selectedCustomer?.mobileNo || '' }}</p>
 </div>
 
-<!-- Customer Details Section -->
-<div *ngIf="selectedCustomer" class="customer-details col-md-12 mt-3">
-    <h6>Customer Details</h6>
-    <p><strong>Name:</strong> {{ selectedCustomer.customerName }}</p>
-    <p><strong>Email:</strong> {{ selectedCustomer.emailId }}</p>
-    <p><strong>Phone:</strong> {{ selectedCustomer.mobileNo }}</p>
+<div class="d-flex justify-content-end mt-2">
+    <button type="button" class="btn btn-secondary" (click)="openProductModal(productModal)">Select Product</button>
 </div>
+
+
+<ng-template #productModal>
+    <div class="modal-header">
+      <h1 class="modal-title">Select Product</h1>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef.close()"></button>
+    </div>
+  
+    <div class="modal-body">
+      <!-- Search Product -->
+      <input 
+        type="text" 
+        class="form-control mb-3" 
+        [(ngModel)]="searchText" 
+        placeholder="Search Product..." 
+        (input)="filterProducts()"
+      />
+  
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>
+              <input type="checkbox" (change)="toggleSelectAll($event)">
+            </th>
+            <th>Sl No</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Total Remain Qty</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of paginatedProducts; let i = index">
+            <td>
+              <input type="checkbox" [(ngModel)]="product.selected" (change)="updateSelection(product)">
+            </td>
+            <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.totalQty }}</td>
+            <td>
+              <input 
+                type="number" 
+                class="form-control form-control-sm" 
+                [(ngModel)]="product.quantity" 
+                (input)="updateSelection(product)" 
+                min="1"
+              />
+            </td>
+          </tr>
+          <tr *ngIf="paginatedProducts.length === 0">
+            <td colspan="6" class="text-center">No products found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Pagination Controls -->
+    <div class="modal-footer d-flex justify-content-between">
+      <div>
+        <button 
+          class="btn btn-secondary" 
+          [disabled]="currentPage === 1" 
+          (click)="changePage(currentPage - 1)">
+          Previous
+        </button>
+        <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button 
+          class="btn btn-secondary" 
+          [disabled]="currentPage === totalPages" 
+          (click)="changePage(currentPage + 1)">
+          Next
+        </button>
+      </div>
+      
+      <div>
+        <button type="button" class="btn btn-success" (click)="addSelectedProducts()">Add</button>
+      </div>
+    </div>
+  </ng-template>
+  
+  
+<!-- Selected Products Display -->
+<div class="selected-products mt-3">
+    <h3>Selected Products</h3>
+    <div class="table-container">
+      <table class="table table-bordered">
+        <thead class="table-light table-header">
+          <tr>
+            <th>Product Name</th>
+            <th>MRP</th>
+            <th>GST</th>
+            <th>Discount</th>
+            <th>Quantity</th>
+            <th>Enterd Qty</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <tr *ngFor="let product of selectedProducts">
+            <td>{{ product.productName }}</td>
+            <td>{{ product.barcode }}</td>
+            <td>{{ product.gst }}</td>
+            <td>{{ product.discount }}</td>
+            <td>{{ product.totalQty }}</td>
+            <td>
+              <input 
+                type="number" 
+                class="form-control form-control-sm"
+                [(ngModel)]="product.quantity"
+                min="1"
+                (change)="updateProductQuantity(product)">
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="removeProduct(product)">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  
 
 <!-- Create Customer Modal -->
 <ng-template #customerModal>

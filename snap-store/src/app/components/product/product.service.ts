@@ -18,15 +18,16 @@ export class ProductService implements Resolve<any> {
     this.apiUrl = this.apiConfig.apiUrl;
   }
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
+   
+    return this.fetchProducts();
+  }
+
+  fetchProducts(): Observable<any> {
     const user = localStorage.getItem('user');
     if (user) {
       const User = JSON.parse(user);
       this.userId = User?.id;
     }
-    return this.fetchProducts();
-  }
-
-  fetchProducts(): Observable<any> {
     return this.http.get<any[]>(`${this.apiUrl}/api/product/getproduct/${this.userId}`).pipe(
       tap((data) => this.productSubject.next(data ?? [])),
       catchError((error) => {

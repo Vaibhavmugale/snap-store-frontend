@@ -78,3 +78,22 @@
     background-color: white;
     border-radius: 50%;
 }
+
+.table-container {
+    max-height: 300px;  /* Set max height for scrollable area */
+    overflow-y: auto;   /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional: Border for better visibility */
+    position: relative;
+  }
+  
+  .table-header {
+    position: sticky;
+    top: 0;
+    background: white; /* Ensures header stays visible */
+    z-index: 10; /* Keeps it above scrolling content */
+  }
+  
+  .table-body tr {
+    white-space: nowrap; /* Prevents line breaks in text */
+  }
+  
