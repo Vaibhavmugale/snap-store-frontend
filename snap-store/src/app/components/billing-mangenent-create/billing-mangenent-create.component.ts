@@ -33,7 +33,11 @@ export class BillingMangenentCreateComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalPages: number = 1;
-  
+  totalAmount = 0;
+  totalDisc = 0;
+  totalGst = 0;
+  totalQty = 0;
+
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +54,12 @@ export class BillingMangenentCreateComponent implements OnInit {
       const User = JSON.parse(user);
       this.userId = User?.id;
     }
+    this.customerForm = this.fb.group({
+      customerName: ['', Validators.required],
+      emailId: ['', [Validators.required, Validators.email]],
+      mobileNo: ['', Validators.required],
+      whatsappNo: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
@@ -71,82 +81,45 @@ export class BillingMangenentCreateComponent implements OnInit {
       this.filteredProducts = resp;
       this.filterProducts();
     });
-
-    this.initCustomerForm();
   }
 
   createForm(billing: Billing): void {
     this.billingForm = this.fb.group({
       id: [billing.id],
-      billingName: [billing.billingName, Validators.required],
-      description: [billing.description],
-      barcode: [billing.barcode],
-      expireDate: [this.convertToDate(billing.expireDate)],
-      manufactureDate: [this.convertToDate(billing.manufactureDate)],
-      price: [billing.price, [Validators.required, Validators.min(0)]],
-      discount: [billing.discount],
-      gst: [billing.gst],
-      remainingQty: [billing.remainingQty],
-      totalQty: [billing.totalQty, [Validators.required, Validators.min(1)]],
-      createdBy: [billing.createdBy || 1],
-      modifiedBy: [billing.modifiedBy || 1],
+      totalAmount: [billing.totalAmount],
+      totalGst: [billing.totalGst],
+      totalDisc: [billing.totalDisc],
+      customerId: [null, Validators.required],
+      totalQty: [billing.totalQty],
+      createdBy: [this.userId],
+      modifiedBy: [this.userId],
       companyId: [billing.companyId || 1],
-      createdDate: [billing.createdDate || '']
-    });
-  }
-
-  private convertToDate(dateString: string | null): string | null {
-    return dateString ? new Date(dateString).toISOString().split('T')[0] : null;
-  }
-
-  onSubmit(): void {
-    if (this.billingForm.invalid) {
-      console.warn("Form is invalid. Please check required fields.");
-      return;
-    }
-    const data = this.billingForm.getRawValue();
-    data.userId = this.userId;
-
-    this.createBillingService.addBilling(data).subscribe({
-      next: () => {
-        alert("Billing added successfully!");
-        this.router.navigateByUrl("/billing");
-      },
-      error: (error) => {
-        console.error("Error adding billing:", error);
-        alert("Failed to add billing. Please try again.");
-      }
-    });
-  }
-
-  initCustomerForm(): void {
-    this.customerForm = this.fb.group({
-      customerName: ['', Validators.required],
-      emailId: ['', [Validators.required, Validators.email]],
-      mobileNo: ['', Validators.required],
-      whatsappNo: ['', Validators.required]
+      userId: [billing.userId || this.userId],
+      createdDate: [billing.createdDate || ''],
+      selectedProducts: [null, Validators.required],
+      quantity: [billing.quantity],
+      price: [billing.price]
     });
   }
 
   updateTotalPages(): void {
     this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage);
   }
-  
+
   openProductModal(content: any) {
     this.modalRef = this.modalService.open(content, { size: 'xl', centered: true });
   }
-  
+
   autoSelectProduct(product: any): void {
     product.selected = product.quantity > 0;
   }
 
   updateSelection(product: any): void {
-    console.log(product)
     if (product.quantity > product.totalQty) {
       alert("Entered quantity is more than remaining quantity.");
-      product.quantity = product.totalQty;  
+      product.quantity = product.totalQty;
     }
-  
+
     if (product.selected || product.quantity >= 0) {
       product.selected = true;
       this.selectedProductsMap.set(product.id, { product, quantity: product.quantity || 1 });
@@ -169,66 +142,135 @@ export class BillingMangenentCreateComponent implements OnInit {
       mainProduct.quantity = 0;
     }
   }
-  
-  
-  updateProductQuantity(product: any): void {
-    if (product.quantity < 1) {
+onCustomerChange(customer: any) {
+  console.log(customer)
+  this.selectedCustomer = customer || null;
+}
+
+
+updateProductQuantity(product: any): void {
+  if (product.quantity <= 0) {
+    setTimeout(() => {
       product.quantity = 1;
-    }
-    console.log("Updated quantity:",product);
+      this.recalculateTotals();
+    });
+  } else {
+    this.recalculateTotals();
   }
-  
-  
+}
 
-toggleSelectAll(event: any): void {
-  const isChecked = event.target.checked;
-  this.filteredProducts.forEach(product => {
-    product.selected = isChecked;
-    product.quantity = isChecked ? 1 : 0;
+updateProductPrice(product: any): void {
+  if (product.price <= 0) {
+    setTimeout(() => {
+      product.price = 1;
+      this.recalculateTotals();
+    });
+  } else {
+    this.recalculateTotals();
+  }
+}
 
-    if (isChecked) {
-      this.selectedProductsMap.set(product.id, { product, quantity: 1 });
-    } else {
-      this.selectedProductsMap.delete(product.id);
-    }
+  recalculateTotals(): void {
+  this.totalAmount = 0;
+  this.totalGst = 0;
+  this.totalDisc = 0;
+  this.totalQty = 0;
+
+  this.selectedProducts.forEach(product => {
+    const baseTotal = product.price * product.quantity;
+    const discount = product.discount || 0;
+    const discountedAmount = baseTotal * (discount / 100);
+    const afterDiscount = baseTotal - discountedAmount;
+    const gst = product.gst || 0;
+    const gstAmount = afterDiscount * (gst / 100);
+    const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
+    const quantity = product.quantity || 0;
+    product.total = total;
+
+    this.totalAmount = parseFloat((this.totalAmount + total).toFixed(2));
+    this.totalGst = parseFloat((this.totalGst + gstAmount).toFixed(2));
+    this.totalDisc = parseFloat((this.totalDisc + discountedAmount).toFixed(2));
+    this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
   });
 }
 
-addSelectedProducts(): void {
-  this.selectedProducts = Array.from(this.selectedProductsMap.values()).map(entry => ({
-    ...entry.product,
-    quantity: entry.quantity
-  }));
-  console.log("this.selectedProducts",this.selectedProducts)
-  this.modalRef.close();
-}
 
 
-  
-filterProducts(): void {
-  const search = this.searchText.toLowerCase().trim();
-  this.filteredProducts = this.products.filter(product => 
-    product.productName.toLowerCase().includes(search) ||
-    product.barcode.toLowerCase().includes(search) ||
-    product.price.toString().includes(search) ||
-    product.discount.toString().includes(search)
-  );
-  this.currentPage = 1;
-  this.updateTotalPages();
-}
+  toggleSelectAll(event: any): void {
+    const isChecked = event.target.checked;
+    this.filteredProducts.forEach(product => {
+      product.selected = isChecked;
+      product.quantity = isChecked ? 1 : 0;
 
-
-changePage(page: number): void {
-  if (page >= 1 && page <= this.totalPages) {
-    this.currentPage = page;
+      if (isChecked) {
+        this.selectedProductsMap.set(product.id, { product, quantity: 1 });
+      } else {
+        this.selectedProductsMap.delete(product.id);
+      }
+    });
   }
-}
 
-get paginatedProducts(): any[] {
-  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-  const endIndex = startIndex + this.itemsPerPage;
-  return this.filteredProducts.slice(startIndex, endIndex);
-}
+  addSelectedProducts(): void {
+    this.selectedProducts = Array.from(this.selectedProductsMap.values()).map(entry => ({
+      ...entry.product,
+      quantity: entry.quantity
+    }));
+
+    console.log("this.selectedProducts", this.selectedProducts);
+    this.totalAmount = 0;
+    this.totalGst = 0;
+    this.totalDisc = 0;
+    this.totalQty = 0;
+
+    this.selectedProducts.forEach(product => {
+      let baseTotal = product.price * product.quantity;
+      const discount = product.discount || 0;
+      const discountedAmount = baseTotal * (discount / 100);
+      const afterDiscount = baseTotal - discountedAmount;
+      const gst = product.gst || 0;
+      const gstAmount = afterDiscount * (gst / 100);
+      const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
+      product.total = total;
+      const quantity = product.quantity || 0;
+      
+      this.totalAmount = parseFloat((total + this.totalAmount).toFixed(2));
+      this.totalGst = parseFloat((gstAmount + this.totalGst).toFixed(2));
+      this.totalDisc = parseFloat((discountedAmount + this.totalDisc).toFixed(2));
+      this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
+
+      console.log(product);
+    });
+
+    this.modalRef.close();
+  }
+
+
+
+
+  filterProducts(): void {
+    const search = this.searchText.toLowerCase().trim();
+    this.filteredProducts = this.products.filter(product =>
+      product.productName.toLowerCase().includes(search) ||
+      product.barcode.toLowerCase().includes(search) ||
+      product.price.toString().includes(search) ||
+      product.discount.toString().includes(search)
+    );
+    this.currentPage = 1;
+    this.updateTotalPages();
+  }
+
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  get paginatedProducts(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredProducts.slice(startIndex, endIndex);
+  }
 
 
 
@@ -241,35 +283,59 @@ get paginatedProducts(): any[] {
     this.modalRef = this.modalService.open(content, { centered: true });
   }
 
-saveCustomer(): void {
-  if (this.customerForm.invalid) {
-    return;
+  saveCustomer(): void {
+    if (this.customerForm.invalid) {
+      return;
+    }
+
+    const data = this.customerForm.getRawValue();
+    data.userId = this.userId;
+
+    this.createCustomerService.addCustomer(data).subscribe({
+      next: (response) => {
+        alert("Customer added successfully!");
+
+        if (this.modalRef) {
+          this.modalRef.close();
+        }
+
+        this.getCustomerService.fetchCustomer().subscribe(resp => {
+          this.customers = resp;
+
+          this.selectedCustomer = this.customers.find(e =>
+            e.customerName.trim() === data.customerName.trim()
+          );
+        });
+      },
+
+      error: (error) => {
+        console.error("Error adding customer:", error);
+        alert("Failed to add customer. Please try again.");
+      }
+    });
   }
 
-  const data = this.customerForm.getRawValue();
-  data.userId = this.userId;
+  saveBilling(): void {
 
-  this.createCustomerService.addCustomer(data).subscribe({
-    next: (response) => {
-      alert("Customer added successfully!");
 
-      if (this.modalRef) {
-        this.modalRef.close();
+    const data = this.billingForm.getRawValue();
+    console.log("first", data)
+    data.totalAmount = this.totalAmount;
+    data.totalGst = this.totalGst;
+    data.totalDisc = this.totalDisc;
+     data.totalQty = this.totalQty;
+    // data.customerId = this.selectedCustomer[0].id;
+    data.selectedProducts = this.selectedProducts;
+    console.log("sec", data)
+     this.createBillingService.addBilling(data).subscribe({
+      next: (response) => {
+        alert("billing created successfully!");
+      },
+
+      error: (error) => {
+        console.error("Error create billing:", error);
+        alert("Failed to create billing. Please try again.");
       }
-
-      this.getCustomerService.fetchCustomer().subscribe(resp => {
-        this.customers = resp;
-
-        this.selectedCustomer = this.customers.find(e => 
-          e.customerName.trim() === data.customerName.trim()
-        );
-      });
-    },
-
-    error: (error) => {
-      console.error("Error adding customer:", error);
-      alert("Failed to add customer. Please try again.");
-    }
-  });
-}
+    });
+  }
 }
