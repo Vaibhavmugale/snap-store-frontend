@@ -16,23 +16,23 @@
         <thead class="table-dark">
           <tr>
             <th>Sl No</th>
-            <th>Billing Name</th>
+            <th>Customer Name</th>
             <th>Email</th>
             <th>Phone No</th>
+            <th>Total Qty</th>
+            <th>Total Price</th>
             <th>Created Date</th>
-            <th>modified Date</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let billing of filteredBillings; let i = index">
-            <td [routerLink]="['/billing', billing.id]">{{ i + 1 }}</td>
-            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.billingName }}</td>
-            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.emailId }}</td>
-            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.mobileNo }}</td>
-            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.createdDate |
-              date:'dd/MM/yyyy' }}</td>
-            <td style="cursor: pointer;" [routerLink]="['/billing', billing.id]">{{ billing.modifiedDate |
-              date:'dd/MM/yyyy' }}</td>
+            <td [routerLink]="['/viewbilling', billing.id]">{{ i + 1 }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.customerName }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.customerEmail }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.customerPhone }}</td>
+             <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.totalQty }}</td>
+              <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.totalAmount }}</td>
+            <td style="cursor: pointer;" [routerLink]="['/viewbilling', billing.id]">{{ billing.createdDate | date:'dd/MM/yyyy' }}</td>
           </tr>
           <tr *ngIf="filteredBillings.length === 0">
             <td colspan="7" class="text-center">No billings found.</td>

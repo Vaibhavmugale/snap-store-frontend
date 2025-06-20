@@ -19,6 +19,8 @@ import { CustomerManagementCreateComponent } from './components/customer-managem
 import { CustomerMangementCreateService } from './components/customer-management-create/customer-mangement-create.service';
 import { BillingMangementCreateService } from './components/billing-mangenent-create/billing-mangement-create.service';
 import { BillingMangenentCreateComponent } from './components/billing-mangenent-create/billing-mangenent-create.component';
+import { BillingViewService } from './components/billing-view/billing-view.service';
+import { BillingViewComponent } from './components/billing-view/billing-view.component';
 
 export const routes: Routes = [
   {   
@@ -69,6 +71,14 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         resolve: { 
           billing: BillingMangementCreateService
+        }
+      },
+      {
+        path: 'viewbilling/:id',
+        component: BillingViewComponent, 
+        canActivate: [AuthGuard],
+        resolve: { 
+          billingview: BillingViewService
         }
       },
       {

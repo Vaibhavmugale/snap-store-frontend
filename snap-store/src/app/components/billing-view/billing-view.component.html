@@ -1,0 +1,46 @@
+
+  <div class="customer-details col-md-12 mt-3">
+    <h3>Customer Details</h3>
+    <p><strong>Name:</strong> {{ billingData?.customerName || '' }}</p>
+    <p><strong>Email:</strong> {{ billingData?.customerEmail || '' }}</p>
+    <p><strong>Phone:</strong> {{ billingData?.customerPhone || '' }}</p>
+  </div>
+
+  <div class="selected-products mt-3">
+    <h3>Selected Products</h3>
+    <div class="table-container">
+      <table class="table table-bordered">
+        <thead class="table-light table-header">
+          <tr>
+            <th>Product Name</th>
+            <th>MRP</th>
+            <th>GST</th>
+            <th>Discount</th>
+            <th>Quantity</th>
+            <th>Enterd Qty</th>
+            <th>Total Price</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <tr *ngFor="let product of selectedProducts">
+            <td>{{ product.productName }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.gst }}</td>
+            <td>{{ product.discount }}</td>
+            <td>{{ product.totalQty }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.total }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<div class="row mt-5">
+  <div class="col-md-3 customer-details ms-auto text-start">
+    <p><strong>Total Quantity:</strong> {{ billingData.totalQty || 0 }}</p>
+    <p><strong>Total Discount:</strong> {{ billingData.totalDisc || 0 }}</p>
+    <p><strong>Total GST:</strong> {{ billingData.totalGst || 0 }}</p>
+    <p><strong>Total Amount:</strong> {{ billingData.totalAmount || 0 }}</p>
+  </div>
+</div>
