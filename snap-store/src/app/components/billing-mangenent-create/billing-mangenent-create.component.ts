@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BillingMangementCreateService } from './billing-mangement-create.service';
@@ -29,7 +29,7 @@ export class BillingMangenentCreateComponent implements OnInit {
   public modalRef!: NgbModalRef;
   products: any[] = [];
   filteredProducts: any[] = [];
-  selectedProductsMap: Map<number, { product: any; quantity: number }> = new Map();
+  selectedProductsSet: Set<any> = new Set();
   selectedProducts: any[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -46,8 +46,7 @@ export class BillingMangenentCreateComponent implements OnInit {
     private getCustomerService: CustomerManagementService,
     private modalService: NgbModal,
     private createCustomerService: CustomerMangementCreateService,
-    private productService: ProductService,
-    private cdRef: ChangeDetectorRef
+    private productService: ProductService
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -64,14 +63,7 @@ export class BillingMangenentCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.createBillingService.getBillingObservable().subscribe(data => {
-      if (data === false) {
-        this.createForm(new Billing());
-      } else {
-        this.billingData = data;
-        this.createForm(this.billingData);
-      }
-    });
+    this.createForm(new Billing());
 
     this.getCustomerService.fetchCustomer().subscribe(resp => {
       this.customers = resp;
@@ -116,107 +108,71 @@ export class BillingMangenentCreateComponent implements OnInit {
   }
 
   updateSelection(product: any): void {
-    if (product.quantity > product.totalQty) {
+    if (product.quantity > product.remainingQty || product.remainingQty===0) {
       Swal.fire({
         icon: 'warning',
         title: 'Warning',
         text: 'Entered quantity is more than remaining quantity.',
         confirmButtonColor: '#3085d6'
       });
-      product.quantity = product.totalQty;
-    }
-
-    if (product.selected || product.quantity >= 0) {
-      product.selected = true;
-      this.selectedProductsMap.set(product.id, { product, quantity: product.quantity || 1 });
-    } else {
+      product.quantity = 0;
       product.selected = false;
-      this.selectedProductsMap.delete(product.id);
+    } else {
+      if (product?.selected  && product.remainingQty > 0) {
+        product.selected = true;
+        product.quantity = 1;
+        this.selectedProductsSet.add(product);
+      } else {
+        this.selectedProductsSet.delete(product);
+         product.quantity = 0;
+          product.selected = false;
+      }
     }
-    this.cdRef.markForCheck();
+  }
+
+   updateEnter(product: any): void {
+    if (product.quantity > product.remainingQty  || product.remainingQty===0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Warning',
+        text: 'Entered quantity is more than remaining quantity.',
+        confirmButtonColor: '#3085d6'
+      });
+      product.quantity = 0;
+    } else {
+      if (!product?.selected  && product.remainingQty > 0) {
+        product.selected = true;
+        this.selectedProductsSet.add(product);
+      }
+    }
   }
 
   removeProduct(product: any): void {
-    this.selectedProducts = this.selectedProducts.filter(p => p.id !== product.id);
     product.selected = false;
-    product.quantity = 0;
-    this.selectedProductsMap.delete(product.id);
-    const mainProduct = this.products.find(p => p.id === product.id);
-    if (mainProduct) {
-      mainProduct.selected = false;
-      mainProduct.quantity = 0;
-    }
+    this.selectedProductsSet.delete(product);
   }
 
   onCustomerChange(customer: any) {
     this.selectedCustomer = customer || null;
   }
 
-  updateProductQuantity(product: any): void {
-    if (product.quantity <= 0) {
-      setTimeout(() => {
-        product.quantity = 1;
-        this.recalculateTotals();
-      });
-    } else {
-      this.recalculateTotals();
-    }
-  }
-
-  updateProductPrice(product: any): void {
-    if (product.price <= 0) {
-      setTimeout(() => {
-        product.price = 1;
-        this.recalculateTotals();
-      });
-    } else {
-      this.recalculateTotals();
-    }
-  }
-
-  recalculateTotals(): void {
-    this.totalAmount = 0;
-    this.totalGst = 0;
-    this.totalDisc = 0;
-    this.totalQty = 0;
-
-    this.selectedProducts.forEach(product => {
-      const baseTotal = product.price * product.quantity;
-      const discount = product.discount || 0;
-      const discountedAmount = baseTotal * (discount / 100);
-      const afterDiscount = baseTotal - discountedAmount;
-      const gst = product.gst || 0;
-      const gstAmount = afterDiscount * (gst / 100);
-      const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
-      const quantity = product.quantity || 0;
-      product.total = total;
-
-      this.totalAmount = parseFloat((this.totalAmount + total).toFixed(2));
-      this.totalGst = parseFloat((this.totalGst + gstAmount).toFixed(2));
-      this.totalDisc = parseFloat((this.totalDisc + discountedAmount).toFixed(2));
-      this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
-    });
-  }
-
   toggleSelectAll(event: any): void {
     const isChecked = event.target.checked;
+
     this.filteredProducts.forEach(product => {
       product.selected = isChecked;
       product.quantity = isChecked ? 1 : 0;
 
       if (isChecked) {
-        this.selectedProductsMap.set(product.id, { product, quantity: 1 });
+        this.selectedProductsSet.add(product);
       } else {
-        this.selectedProductsMap.delete(product.id);
+        this.selectedProductsSet.delete(product);
       }
     });
   }
 
   addSelectedProducts(): void {
-    this.selectedProducts = Array.from(this.selectedProductsMap.values()).map(entry => ({
-      ...entry.product,
-      quantity: entry.quantity
-    }));
+    this.selectedProducts = Array.from(this.selectedProductsSet);
 
     this.totalAmount = 0;
     this.totalGst = 0;
@@ -239,7 +195,6 @@ export class BillingMangenentCreateComponent implements OnInit {
       this.totalDisc = parseFloat((discountedAmount + this.totalDisc).toFixed(2));
       this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
     });
-
     this.modalRef.close();
   }
 
@@ -247,9 +202,8 @@ export class BillingMangenentCreateComponent implements OnInit {
     const search = this.searchText.toLowerCase().trim();
     this.filteredProducts = this.products.filter(product =>
       product.productName.toLowerCase().includes(search) ||
-      product.barcode.toLowerCase().includes(search) ||
       product.price.toString().includes(search) ||
-      product.discount.toString().includes(search)
+      product.quantity.toString().includes(search)
     );
     this.currentPage = 1;
     this.updateTotalPages();
@@ -283,50 +237,50 @@ export class BillingMangenentCreateComponent implements OnInit {
   }
 
   saveCustomer(): void {
-  if (this.customerForm.invalid) {
-    return;
-  }
-
-  const data = this.customerForm.getRawValue();
-  data.userId = this.userId;
-
-  this.createCustomerService.addCustomer(data).subscribe({
-    next: (response) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Customer added successfully!',
-        confirmButtonColor: '#3085d6'
-      });
-
-      if (this.modalRef) {
-        this.modalRef.close();
-      }
-
-      this.getCustomerService.fetchCustomer().subscribe(resp => {
-        this.customers = resp;
-
-        this.selectedCustomer = this.customers.find(e =>
-          e.customerName.trim() === data.customerName.trim()
-        );
-        
-        if (this.selectedCustomer) {
-          this.billingForm.get('customerId')?.setValue(this.selectedCustomer.id);
-        }
-      });
-    },
-
-    error: (error) => {
-      console.error("Error adding customer:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to add customer. Please try again.',
-        confirmButtonColor: '#d33'
-      });
+    if (this.customerForm.invalid) {
+      return;
     }
-  });
-}
+
+    const data = this.customerForm.getRawValue();
+    data.userId = this.userId;
+
+    this.createCustomerService.addCustomer(data).subscribe({
+      next: (response) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Customer added successfully!',
+          confirmButtonColor: '#3085d6'
+        });
+
+        if (this.modalRef) {
+          this.modalRef.close();
+        }
+
+        this.getCustomerService.fetchCustomer().subscribe(resp => {
+          this.customers = resp;
+
+          this.selectedCustomer = this.customers.find(e =>
+            e.customerName.trim() === data.customerName.trim()
+          );
+
+          if (this.selectedCustomer) {
+            this.billingForm.get('customerId')?.setValue(this.selectedCustomer.id);
+          }
+        });
+      },
+
+      error: (error) => {
+        console.error("Error adding customer:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to add customer. Please try again.',
+          confirmButtonColor: '#d33'
+        });
+      }
+    });
+  }
 
 
   saveBilling(): void {
