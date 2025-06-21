@@ -61,6 +61,11 @@
             <div *ngIf="productForm.get('totalQty')?.invalid && productForm.get('totalQty')?.touched"
               class="text-danger">Quantity is required and must be 1 or more.</div>
           </div>
+
+          <div *ngIf="pageType === 'Edit'" class="col-12 col-md-6">
+            <label class="form-label">Add Quantity</label>
+            <input type="number" class="form-control" formControlName="updateQty" placeholder="Add quantity" />
+          </div>
         </div>
 
         <button type="submit" class="btn btn-gradient mt-4" [disabled]="!isFormValid()">

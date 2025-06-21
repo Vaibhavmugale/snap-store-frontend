@@ -54,6 +54,7 @@ export class CreateProductComponent implements OnInit {
       price: [product.price, [Validators.required, Validators.min(0)]],
       discount: [product.discount],
       gst: [product.gst],
+      updateQty: [0],
       remainingQty: [product.remainingQty],
       totalQty: [product.totalQty, [Validators.required, Validators.min(1)]],
       createdBy: [product.createdBy || 1],
@@ -84,6 +85,11 @@ export class CreateProductComponent implements OnInit {
 
     if(this.pageType === 'New'){
       data.remainingQty = data.totalQty;
+    }else{
+      if(data.updateQty){
+        data.remainingQty=data.updateQty+data.remainingQty;
+        data.totalQty=data.updateQty+data.totalQty;
+      }
     }
 
     this.createProductService.addProduct(data).subscribe({
