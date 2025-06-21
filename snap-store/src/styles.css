@@ -1,10 +1,106 @@
+/* ✅ Snackbar styles */
 .success-snackbar {
-    background-color: #1e94cf !important; /* Green */
-    color: rgb(15, 10, 17) !important;
+  background-color: #1e94cf !important; /* Blue success */
+  color: rgb(15, 10, 17) !important;
+}
+
+.error-snackbar {
+  background-color: #eb493e !important; /* Red */
+  color: white !important;
+}
+
+/* ✅ Body background */
+body {
+  background-color: #f4f7fc;
+}
+
+/* ✅ Product container */
+.product-container {
+  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* ✅ Table styling */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.table thead th {
+  vertical-align: middle;
+  background-color: #212529;
+  color: #fff;
+}
+
+.table td,
+.table th {
+    cursor: pointer;
+  vertical-align: middle;
+}
+
+.product-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.product-row:hover {
+  background-color: #f1f1f1;
+}
+
+/* ✅ Form input */
+.form-control {
+  border-radius: 8px;
+}
+
+/* ✅ Static paginator */
+.static-paginator-wrapper {
+  margin-top: 24px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+}
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination .page-item {
+  margin: 0;
+}
+
+.pagination .page-link {
+  cursor: pointer; /* 👈 Makes pagination buttons interactive */
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #007bff;
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s ease;
+}
+
+.pagination .page-link:hover {
+  background-color: #f0f0f0;
+}
+
+/* ✅ Responsive adjustments */
+@media (max-width: 768px) {
+  .product-container {
+    padding: 12px;
   }
-  
-  .error-snackbar {
-    background-color: #eb493e !important; /* Red */
-    color: white !important;
+
+  .table {
+    font-size: 12px;
   }
-  
+
+  .pagination .page-link {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}

@@ -1,37 +1,79 @@
 <div class="content">
-    <div class="container mt-4">
-        <div class="card p-3 mb-4">
-            <h5>Add / Edit Customer</h5>
+  <div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+      <h4 class="text-center mb-4 text-primary fw-semibold">
+        {{ isEdit === 'edit' ? 'Edit Customer' : 'Add New Customer' }}
+      </h4>
 
-            <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="customerName" class="form-label">Customer Name</label>
-                        <input type="text" id="customerName" class="form-control" formControlName="customerName">
-                        <div *ngIf="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched" class="text-danger">
-                            Customer name is required.
-                        </div>
-                    </div>
+      <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+        <div class="row gy-4">
+          <!-- Customer Name -->
+          <div class="col-12 col-md-6">
+            <label for="customerName" class="form-label">Customer Name <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="customerName"
+              class="form-control"
+              formControlName="customerName"
+              placeholder="Enter full name"
+              [readonly]="isEdit === 'edit'"
+            />
+            <div
+              *ngIf="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched"
+              class="text-danger"
+            >
+              Customer name is required.
+            </div>
+          </div>
 
-                    <div class="col-md-6">
-                        <label for="emailId" class="form-label">Email ID</label>
-                        <input type="email" id="emailId" class="form-control" formControlName="emailId">
-                    </div>
+          <div class="col-12 col-md-6">
+            <label for="emailId" class="form-label">Email ID</label>
+            <input type="email" id="emailId" class="form-control" formControlName="emailId"
+              placeholder="Enter email address" />
+          </div>
 
-                    <div class="col-md-6">
-                        <label for="mobileNo" class="form-label">Mobile Number</label>
-                        <input type="text" id="mobileNo" class="form-control" formControlName="mobileNo">
-                    </div>
+          <div class="col-12 col-md-6">
+            <label for="mobileNo" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="mobileNo"
+              class="form-control"
+              formControlName="mobileNo"
+              placeholder="Enter mobile number"
+            />
+            <div *ngIf="customerForm.get('mobileNo')?.touched && customerForm.get('mobileNo')?.invalid" class="text-danger">
+              <div *ngIf="customerForm.get('mobileNo')?.errors?.['required']">Mobile number is required.</div>
+              <div *ngIf="customerForm.get('mobileNo')?.errors?.['pattern']">Only digits allowed.</div>
+              <div *ngIf="customerForm.get('mobileNo')?.errors?.['minlength'] || customerForm.get('mobileNo')?.errors?.['maxlength']">
+                Mobile number must be 10 digits.
+              </div>
+            </div>
+          </div>
 
-                    <div class="col-md-6">
-                        <label for="whatsappNo" class="form-label">WhatsApp Number</label>
-                        <input type="text" id="whatsappNo" class="form-control" formControlName="whatsappNo">
-                    </div>
-                  
-                </div>
+          <!-- WhatsApp Number -->
+          <div class="col-12 col-md-6">
+            <label for="whatsappNo" class="form-label">WhatsApp Number <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="whatsappNo"
+              class="form-control"
+              formControlName="whatsappNo"
+              placeholder="Enter WhatsApp number"
+            />
+            <div *ngIf="customerForm.get('whatsappNo')?.touched && customerForm.get('whatsappNo')?.invalid" class="text-danger">
+              <div *ngIf="customerForm.get('whatsappNo')?.errors?.['required']">WhatsApp number is required.</div>
+              <div *ngIf="customerForm.get('whatsappNo')?.errors?.['pattern']">Only digits allowed.</div>
+              <div *ngIf="customerForm.get('whatsappNo')?.errors?.['minlength'] || customerForm.get('whatsappNo')?.errors?.['maxlength']">
+                WhatsApp number must be 10 digits.
+              </div>
+            </div>
+          </div>
+        </div> <!-- ✅ Closing row -->
 
-                <button type="submit" class="btn btn-primary mt-3" [disabled]="customerForm.invalid">Save Customer</button>
-            </form>
-        </div>
+        <button type="submit" class="btn btn-gradient mt-4" [disabled]="customerForm.invalid">
+          {{ isEdit === 'edit' ? 'Update' : 'Save' }} Customer
+        </button>
+      </form>
     </div>
+  </div>
 </div>

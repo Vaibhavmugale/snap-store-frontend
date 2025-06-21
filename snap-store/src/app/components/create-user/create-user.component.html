@@ -1,101 +1,136 @@
 <div class="content">
     <div class="container mt-4">
-        <div class="card p-3 mb-4">
-            <h5>Add / Edit User</h5>
+        <div class="card shadow-lg border-0 rounded-4 p-4">
+            <h4 class="text-center mb-4 text-primary fw-semibold">
+                {{ isEdit === 'edit' ? 'Edit User' : 'Add New User' }}
+            </h4>
 
             <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="userName" class="form-label">User Name</label>
-                        <input type="text" id="userName" class="form-control" formControlName="userName">
-                        <div *ngIf="userForm.get('userName')?.invalid && userForm.get('userName')?.touched" class="text-danger">
+                <div class="row gy-4">
+
+                    <!-- Username -->
+                    <div class="col-12 col-md-6">
+                        <label for="userName" class="form-label">User Name <span class="text-danger">*</span></label>
+                        <input type="text" id="userName" class="form-control" formControlName="userName"
+                            [readonly]="isEdit === 'edit'" placeholder="Enter user name" />
+                        <div *ngIf="userForm.get('userName')?.invalid && userForm.get('userName')?.touched"
+                            class="text-danger">
                             User name is required.
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="password" class="form-label">Password</label>
+                    <!-- Password Field -->
+                    <div class="col-12 col-md-6 position-relative">
+                        <label for="password2" class="form-label">Password <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input [type]="userForm.get('showPassword')?.value ? 'text' : 'password'" id="password2" class="form-control" formControlName="password2">
+                            <input [type]="showPassword ? 'text' : 'password'" id="password2" class="form-control"
+                                formControlName="password2" placeholder="Enter password" />
+                            <span class="input-group-text" (click)="togglePasswordVisibility('password2')"
+                                style="cursor: pointer;">
+                                {{ showPassword ? '🙈' : '👀' }}
+                            </span>
                         </div>
-                        <div class="form-check mt-1">
-                            <input type="checkbox" id="showPassword" class="form-check-input" formControlName="showPassword">
-                            <label for="showPassword" class="form-check-label">Show Password</label>
-                        </div>
-                        <div *ngIf="userForm.get('password2')?.invalid && userForm.get('password2')?.touched" class="text-danger">
+                        <div *ngIf="userForm.get('password2')?.invalid && userForm.get('password2')?.touched"
+                            class="text-danger">
                             Password is required.
                         </div>
                     </div>
-                    
-                    
-                    <div class="col-md-6">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+
+                    <!-- Confirm Password Field -->
+                    <div class="col-12 col-md-6 position-relative">
+                        <label for="confirmPassword" class="form-label">Confirm Password <span
+                                class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input [type]="userForm.get('showConfirmPassword')?.value ? 'text' : 'password'" id="confirmPassword" class="form-control" formControlName="confirmPassword">
+                            <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
+                                class="form-control" formControlName="confirmPassword" placeholder="Confirm password" />
+                            <span class="input-group-text" (click)="togglePasswordVisibility('confirmPassword')"
+                                style="cursor: pointer;">
+                                {{ showConfirmPassword ? '🙈' : '👀' }}
+                            </span>
                         </div>
-                        <div class="form-check mt-1">
-                            <input type="checkbox" id="showConfirmPassword" class="form-check-input" formControlName="showConfirmPassword">
-                            <label for="showConfirmPassword" class="form-check-label">Show Confirm Password</label>
-                        </div>
-                        <div *ngIf="userForm.hasError('passwordMismatch') && userForm.get('confirmPassword')?.touched" class="text-danger">
+                        <div *ngIf="userForm.hasError('passwordMismatch') && userForm.get('confirmPassword')?.touched"
+                            class="text-danger">
                             Passwords do not match.
                         </div>
                     </div>
-                    
-                    
-                    
-                    <div class="col-md-6">
-                        <label for="emailId" class="form-label">Email</label>
-                        <input type="email" id="emailId" [readOnly]="isEdit === 'edit'"  class="form-control" formControlName="emailId">
-                        <div *ngIf="userForm.get('emailId')?.invalid && userForm.get('emailId')?.touched" class="text-danger">
+
+
+                    <!-- Email -->
+                    <div class="col-12 col-md-6">
+                        <label for="emailId" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" id="emailId" class="form-control" formControlName="emailId"
+                            placeholder="Enter email" [readonly]="isEdit === 'edit'" />
+                        <div *ngIf="userForm.get('emailId')?.invalid && userForm.get('emailId')?.touched"
+                            class="text-danger">
                             Enter a valid email address.
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="mobileNo" class="form-label">Mobile Number</label>
-                        <input type="text" id="mobileNo" class="form-control" formControlName="mobileNo">
-                        <div *ngIf="userForm.get('mobileNo')?.invalid && userForm.get('mobileNo')?.touched" class="text-danger">
-                            Enter a valid 10-digit mobile number.
+                    <!-- Mobile Number -->
+                    <div class="col-12 col-md-6">
+                        <label for="mobileNo" class="form-label">Mobile Number <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="mobileNo" class="form-control" formControlName="mobileNo"
+                            placeholder="Enter mobile number" />
+                        <div *ngIf="userForm.get('mobileNo')?.touched && userForm.get('mobileNo')?.invalid"
+                            class="text-danger">
+                            <div *ngIf="userForm.get('mobileNo')?.errors?.['required']">Mobile number is required.</div>
+                            <div *ngIf="userForm.get('mobileNo')?.errors?.['pattern']">Mobile number must be 10 digits.
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <!-- WhatsApp Number -->
+                    <div class="col-12 col-md-6">
                         <label for="whatsappNo" class="form-label">WhatsApp Number</label>
-                        <input type="text" id="whatsappNo" class="form-control" formControlName="whatsappNo">
-                        <div *ngIf="userForm.get('whatsappNo')?.invalid && userForm.get('whatsappNo')?.touched" class="text-danger">
-                            Enter a valid 10-digit WhatsApp number.
+                        <input type="text" id="whatsappNo" class="form-control" formControlName="whatsappNo"
+                            placeholder="Enter WhatsApp number" />
+                        <div *ngIf="userForm.get('whatsappNo')?.touched && userForm.get('whatsappNo')?.invalid"
+                            class="text-danger">
+                            <div *ngIf="userForm.get('whatsappNo')?.errors?.['pattern']">WhatsApp number must be 10
+                                digits.</div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="companyName" class="form-label">Company Name</label>
-                        <input type="text" id="companyName" class="form-control" formControlName="companyName">
+                    <!-- Company Name -->
+                    <div class="col-12 col-md-6">
+                        <label for="companyName" class="form-label">Company Name <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="companyName" class="form-control" formControlName="companyName"
+                            placeholder="Enter company name" />
+                        <div *ngIf="userForm.get('companyName')?.invalid && userForm.get('companyName')?.touched"
+                            class="text-danger">Company name is required.</div>
                     </div>
 
-                    <div *ngIf="userType===1" class="col-md-6">
+                    <!-- User Type -->
+                    <div class="col-12 col-md-6" *ngIf="userType === 1">
                         <label for="usertype" class="form-label">User Type</label>
                         <select id="usertype" class="form-control" formControlName="usertype">
                             <option value="0">Normal User</option>
                             <option value="1">Admin</option>
                         </select>
-                    </div>  
-                    
-                    <div *ngIf="userType===1" class="col-md-6">
+                    </div>
+
+                    <!-- User Status -->
+                    <div class="col-12 col-md-6" *ngIf="userType === 1">
                         <label class="form-label">User Status</label>
                         <div class="form-check">
-                            <input type="radio" id="active" class="form-check-input" formControlName="userStatus" [value]="1">
+                            <input type="radio" id="active" class="form-check-input" formControlName="userStatus"
+                                [value]="1" />
                             <label for="active" class="form-check-label">Active</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" id="deactive" class="form-check-input" formControlName="userStatus" [value]="0">
+                            <input type="radio" id="deactive" class="form-check-input" formControlName="userStatus"
+                                [value]="0" />
                             <label for="deactive" class="form-check-label">Deactive</label>
                         </div>
                     </div>
-                    
+
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3" [disabled]="userForm.invalid">Save User</button>
+                <button type="submit" class="btn btn-gradient mt-4" [disabled]="userForm.invalid">
+                    {{ isEdit === 'edit' ? 'Update' : 'Save' }} User
+                </button>
             </form>
         </div>
     </div>

@@ -1,4 +1,4 @@
-
+/* ========== ng-select dropdown styling ========== */
 ::ng-deep ng-select {
     width: 100%;
     display: block;
@@ -44,21 +44,19 @@
     color: white;
 }
 
+/* ========== Customer details panel styling ========== */
 .customer-details {
     border: 1px solid #ced4da;
     border-radius: 5px;
     padding: 15px;
     background-color: #f8f9fa;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.customer-details {
     background: #f8f9fa;
     padding: 10px;
-    border-radius: 5px;
     border-left: 4px solid #007bff;
 }
 
+/* Modal styling */
 .modal-dialog {
     max-width: 500px;
 }
@@ -79,21 +77,257 @@
     border-radius: 50%;
 }
 
+/* Table container with sticky header and scroll */
 .table-container {
     max-height: 300px;  /* Set max height for scrollable area */
     overflow-y: auto;   /* Enable vertical scrolling */
     border: 1px solid #ddd; /* Optional: Border for better visibility */
     position: relative;
-  }
-  
-  .table-header {
+}
+
+.table-header {
     position: sticky;
     top: 0;
     background: white; /* Ensures header stays visible */
     z-index: 10; /* Keeps it above scrolling content */
-  }
-  
-  .table-body tr {
+}
+
+.table-body tr {
     white-space: nowrap; /* Prevents line breaks in text */
+}
+
+/* ========== General form container and spacing ========== */
+form {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.col-md-6 {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #1e3a8a; /* Indigo blue */
+}
+
+.d-flex {
+  align-items: center;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #3b82f6, #2563eb);
+  border: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #2563eb, #1e40af);
+}
+
+.btn-secondary {
+  background-color: #6b7280; /* Gray-600 */
+  border: none;
+  font-weight: 600;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563; /* Gray-700 */
+}
+
+.btn-success {
+  background-color: #22c55e; /* Emerald-500 */
+  border: none;
+  font-weight: 600;
+}
+
+.btn-success:hover {
+  background-color: #16a34a; /* Emerald-600 */
+}
+
+.customer-details {
+  background: #f3f4f6;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.05);
+  margin-top: 15px;
+  color: #1f2937;
+}
+
+.customer-details h6 {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #2563eb;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 6px;
+}
+
+.customer-details p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.selected-products {
+  margin-top: 30px;
+}
+
+.selected-products h3 {
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1e3a8a;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 6px;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgb(0 0 0 / 0.05);
+}
+
+.table {
+  min-width: 750px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.table thead.table-header,
+.table thead.table-light {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.table thead th {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 2px solid #3b82f6;
+  white-space: nowrap;
+}
+
+.table tbody tr:hover {
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+
+.table tbody td {
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.btn-danger {
+  background-color: #ef4444; /* Red-500 */
+  border: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c; /* Red-700 */
+}
+
+input.form-control-sm {
+  font-size: 0.9rem;
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s ease;
+}
+
+input.form-control-sm:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 5px #93c5fd;
+  outline: none;
+}
+
+/* Modal styles */
+.modal-header {
+  background-color: #3b82f6;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 15px 20px;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  color: white;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px 25px;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.modal-footer {
+  padding: 15px 25px;
+  background: #f9fafb;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.modal-footer .btn {
+  min-width: 100px;
+}
+
+/* Pagination buttons */
+.modal-footer .btn-secondary {
+  margin-right: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .col-md-6 {
+    width: 100% !important;
+    margin-bottom: 15px;
   }
-  
+
+  .table {
+    min-width: 100% !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 10px 8px;
+    font-size: 0.9rem;
+  }
+
+  .customer-details {
+    padding: 15px 15px;
+    font-size: 0.9rem;
+  }
+
+  .modal-body {
+    font-size: 0.9rem;
+  }
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background-color: transparent;
+}

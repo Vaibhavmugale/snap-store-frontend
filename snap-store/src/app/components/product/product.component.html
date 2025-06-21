@@ -1,63 +1,71 @@
-<div class="container mt-5 d-flex flex-column" style="min-height: 80vh;">
-
-  <div class="d-flex justify-content-between mb-4">
-    <h2>Product</h2>
+<div class="container product-container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <h2 class="mb-2">📦 Products</h2>
+    <button class="btn btn-primary" routerLink="/product/new">+ Add Product</button>
   </div>
 
-  <div class="d-flex justify-content-between mb-4">
-    <input type="text" class="form-control w-50" id="search" placeholder="Search ..." [(ngModel)]="searchText"
-      (input)="filterProducts()">
-    <button class="btn btn-primary" routerLink="/product/new">Add</button>
+  <!-- Search Box -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="🔍 Search by name, price, qty, date..."
+      [(ngModel)]="searchText"
+      (input)="filterProducts()"
+    />
   </div>
 
-
-  <div class="row" id="snapList">
-    <table class="table table-bordered table-striped">
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover text-center align-middle">
       <thead class="table-dark">
         <tr>
-          <th>Sl No</th>
-          <th>Product Name</th>
+        <th>Sl No</th>
+          <th>Product</th>
           <th>Price</th>
           <th>Discount</th>
           <th>Total Qty</th>
-          <th>Remaining Qty</th>
-          <th>Created Date</th>
-          <th>modified Date</th>
+          <th>Remaining</th>
+          <th>Created</th>
+          <th>Modified</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let product of filteredProducts; let i = index">
-          <td [routerLink]="['/product', product.id]"> {{ getSerialNumber(i) }} </td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.productName }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.price }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.discount }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.totalQty }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.remainingQty }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.createdDate |
-            date:'dd/MM/yyyy' }}</td>
-          <td style="cursor: pointer;" [routerLink]="['/product', product.id]">{{ product.modifiedDate |
-            date:'dd/MM/yyyy' }}</td>
+          <td [routerLink]="['/product', product.id]">{{ getSerialNumber(i) }}</td>
+          <td [routerLink]="['/product', product.id]">{{ product.productName }}</td>
+          <td [routerLink]="['/product', product.id]">₹{{ product.price }}</td>
+          <td [routerLink]="['/product', product.id]">{{ product.discount }}%</td>
+          <td [routerLink]="['/product', product.id]">{{ product.totalQty }}</td>
+          <td [routerLink]="['/product', product.id]">{{ product.remainingQty }}</td>
+          <td [routerLink]="['/product', product.id]">{{ product.createdDate | date: 'dd/MM/yyyy' }}</td>
+          <td [routerLink]="['/product', product.id]">{{ product.modifiedDate | date: 'dd/MM/yyyy' }}</td>
         </tr>
         <tr *ngIf="filteredProducts.length === 0">
-          <td colspan="7" class="text-center">No products found.</td>
+          <td colspan="8" class="text-center text-muted">No products found.</td>
         </tr>
+      </tbody>
     </table>
   </div>
 
-  <div class="d-flex justify-content-center mt-auto mb-3">
+  <!-- Paginator -->
+  <div class="d-flex justify-content-center mt-3">
     <nav>
-      <ul class="pagination" style="cursor: pointer;">
+      <ul class="pagination mb-0">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <a class="page-link" (click)="previousPage()">Previous</a>
         </li>
         <li class="page-item disabled">
           <a class="page-link">Page {{ currentPage }}</a>
         </li>
-        <li class="page-item" [class.disabled]="filteredProducts.length < (currentPage === 1 ? 10 : 15)">
+        <li
+          class="page-item"
+          [class.disabled]="(currentPage * pageSize) >= getFilteredList().length"
+        >
           <a class="page-link" (click)="nextPage()">Next</a>
         </li>
       </ul>
     </nav>
   </div>
-
 </div>

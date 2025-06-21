@@ -9,10 +9,11 @@ import { UsersService } from './users.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, NgIf],
   templateUrl: './users.component.html',
-  styleUrl: './users.component.css'
+  styleUrl: './users.component.css',
 })
 export class UsersComponent implements OnInit {
   users: any[] = [];
+  filteredAllData: any[] = [];
   filteredUsers: any[] = [];
   searchText: string = '';
   userType: number = 0;
@@ -26,7 +27,7 @@ export class UsersComponent implements OnInit {
         const parsedUser = JSON.parse(user);
         this.userType = parsedUser.usertype;
       } catch (error) {
-        console.error("Error parsing user data:", error);
+        console.error('Error parsing user data:', error);
       }
     }
   }
@@ -39,50 +40,40 @@ export class UsersComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching users:', err);
-      }
+      },
     });
   }
 
   applyFilterAndPagination(): void {
     const search = this.searchText.toLowerCase().trim();
-
-    const filtered = this.users.filter(user => {
-      const userType = user.usertype === 1 ? 'admin' : 'normal user';
-
-      return user.userName.toLowerCase().includes(search) ||
+    this.filteredAllData = this.users.filter((user) => {
+      const typeStr = user.usertype === 1 ? 'admin' : 'normal user';
+      return (
+        user.userName.toLowerCase().includes(search) ||
         user.emailId.toLowerCase().includes(search) ||
         user.mobileNo.toString().includes(search) ||
-        userType.includes(search);
-    });
-    this.filteredUsers = this.paginate(filtered);
-  }
-
-  paginate(data: any[]): any[] {
-    const startIndex = this.currentPage === 1 ? 0 : 10 + (this.currentPage - 2) * 15;
-    const size = this.currentPage === 1 ? 10 : 15;
-    return data.slice(startIndex, startIndex + size);
-  }
-
-  nextPage(): void {
-    const totalData = this.users.filter(user => {
-      const userType = user.usertype === 1 ? 'admin' : 'normal user';
-      const search = this.searchText.toLowerCase().trim();
-      return user.userName.toLowerCase().includes(search) ||
-        user.emailId.toLowerCase().includes(search) ||
-        user.mobileNo.toString().includes(search) ||
-        userType.includes(search);
+        typeStr.includes(search)
+      );
     });
 
-    const nextStart = this.currentPage === 1 ? 10 : 10 + (this.currentPage - 1) * 15;
-    if (nextStart < totalData.length) {
-      this.currentPage++;
-      this.filteredUsers = this.paginate(totalData);
-    }
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.filteredUsers = this.filteredAllData.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
   }
 
   filterUser(): void {
     this.currentPage = 1;
     this.applyFilterAndPagination();
+  }
+
+  nextPage(): void {
+    const nextStart = this.currentPage * this.pageSize;
+    if (nextStart < this.filteredAllData.length) {
+      this.currentPage++;
+      this.applyFilterAndPagination();
+    }
   }
 
   previousPage(): void {
@@ -93,11 +84,6 @@ export class UsersComponent implements OnInit {
   }
 
   getSerialNumber(index: number): number {
-    if (this.currentPage === 1) {
-      return index + 1;
-    } else {
-      return 10 + (this.currentPage - 2) * 15 + index + 1;
-    }
-
+    return (this.currentPage - 1) * this.pageSize + index + 1;
   }
 }

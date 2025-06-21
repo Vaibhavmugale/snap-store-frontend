@@ -3,8 +3,8 @@
     <label for="customer" class="form-label">Select Customer</label>
     <div class="d-flex">
       <!-- Select Customer Dropdown -->
-      <ng-select [items]="customers" bindLabel="customerName"
-        formControlName="customerId" bindValue="id" [searchable]="true" class="flex-grow-1" (change)="onCustomerChange($event)">
+      <ng-select [items]="customers" bindLabel="customerName" formControlName="customerId" bindValue="id"
+        [searchable]="true" class="flex-grow-1" (change)="onCustomerChange($event)">
       </ng-select>
       <button type="button" class="btn btn-primary ms-2" (click)="openCustomerModal(customerModal)">Add</button>
 
@@ -47,7 +47,7 @@
             </td>
             <td>{{ product.productName }}</td>
             <!-- <td>{{ product.price }}</td> -->
-             <td>
+            <td>
               <input type="number" class="form-control form-control-sm" [(ngModel)]="product.price" min="1"
                 formControlName="price" (ngModelChange)="updateProductPrice(product)">
             </td>
@@ -65,14 +65,14 @@
     </div>
   </div>
 
-<div class="row mt-5">
-  <div class="col-md-3 customer-details ms-auto text-start">
-    <p><strong>Total Quantity:</strong> {{ totalQty || 0 }}</p>
-    <p><strong>Total Discount:</strong> {{ totalDisc || 0 }}</p>
-    <p><strong>Total GST:</strong> {{ totalGst || 0 }}</p>
-    <p><strong>Total Amount:</strong> {{ totalAmount || 0 }}</p>
+  <div class="row mt-5">
+    <div class="col-md-3 customer-details ms-auto text-start">
+      <p><strong>Total Quantity:</strong> {{ totalQty || 0 }}</p>
+      <p><strong>Total Discount:</strong> {{ totalDisc || 0 }}</p>
+      <p><strong>Total GST:</strong> {{ totalGst || 0 }}</p>
+      <p><strong>Total Amount:</strong> {{ totalAmount || 0 }}</p>
+    </div>
   </div>
-</div>
 
 
   <!-- Add Button at the End (Centered) -->
@@ -84,98 +84,141 @@
 
 
 
-<!-- Create Customer Modal -->
 <ng-template #customerModal>
   <div class="modal-header">
     <h5 class="modal-title">Create New Customer</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef.close()"></button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="customerForm">
+    <form [formGroup]="customerForm" novalidate>
       <div class="mb-3">
         <label class="form-label">Customer Name</label>
-        <input type="text" class="form-control" formControlName="customerName">
+        <input type="text" class="form-control" formControlName="customerName" />
+        <div *ngIf="customerForm.get('customerName')?.touched && customerForm.get('customerName')?.invalid"
+          class="text-danger">
+          Customer Name is required.
+        </div>
       </div>
       <div class="mb-3">
         <label class="form-label">Email ID</label>
-        <input type="email" class="form-control" formControlName="emailId">
+        <input type="email" class="form-control" formControlName="emailId" />
+        <div *ngIf="customerForm.get('emailId')?.touched && customerForm.get('emailId')?.invalid" class="text-danger">
+          <div *ngIf="customerForm.get('emailId')?.errors?.['required']">Email is required.</div>
+          <div *ngIf="customerForm.get('emailId')?.errors?.['email']">Invalid email format.</div>
+        </div>
       </div>
       <div class="mb-3">
         <label class="form-label">Mobile Number</label>
-        <input type="text" class="form-control" formControlName="mobileNo">
+        <input type="text" class="form-control" formControlName="mobileNo" maxlength="10" />
+        <div *ngIf="customerForm.get('mobileNo')?.touched && customerForm.get('mobileNo')?.invalid" class="text-danger">
+          <div *ngIf="customerForm.get('mobileNo')?.errors?.['required']">Mobile Number is required.</div>
+          <div *ngIf="customerForm.get('mobileNo')?.errors?.['pattern']">Mobile Number must be exactly 10 digits.</div>
+        </div>
       </div>
       <div class="mb-3">
         <label class="form-label">WhatsApp Number</label>
-        <input type="text" class="form-control" formControlName="whatsappNo">
+        <input type="text" class="form-control" formControlName="whatsappNo" maxlength="10" />
+        <div *ngIf="customerForm.get('whatsappNo')?.touched && customerForm.get('whatsappNo')?.invalid"
+          class="text-danger">
+          <div *ngIf="customerForm.get('whatsappNo')?.errors?.['required']">WhatsApp Number is required.</div>
+          <div *ngIf="customerForm.get('whatsappNo')?.errors?.['pattern']">WhatsApp Number must be exactly 10 digits.
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modalRef.close()">Close</button>
-    <button type="button" class="btn btn-success" (click)="saveCustomer()">Save</button>
+    <button type="button" class="btn btn-success" (click)="saveCustomer()"
+      [disabled]="customerForm.invalid">Save</button>
   </div>
 </ng-template>
 
-
 <ng-template #productModal>
   <div class="modal-header">
-    <h1 class="modal-title">Select Product</h1>
+    <h5 class="modal-title">Select Product</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef.close()"></button>
   </div>
 
-  <div class="modal-body">
+  <div class="modal-body p-2">
     <!-- Search Product -->
-    <input type="text" class="form-control mb-3" [(ngModel)]="searchText" placeholder="Search Product..."
-      (input)="filterProducts()" />
+    <input
+      type="text"
+      class="form-control form-control-sm mb-3"
+      [(ngModel)]="searchText"
+      placeholder="Search Product..."
+      (input)="filterProducts()"
+    />
 
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>
-            <input type="checkbox" (change)="toggleSelectAll($event)">
-          </th>
-          <th>Sl No</th>
-          <th>Product Name</th>
-          <th>Price</th>
-          <th>Total Remain Qty</th>
-          <th>Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of paginatedProducts; let i = index">
-          <td>
-            <input type="checkbox" [(ngModel)]="product.selected" (change)="updateSelection(product)">
-          </td>
-          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ product.productName }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.totalQty }}</td>
-          <td>
-            <input type="number" class="form-control form-control-sm" [(ngModel)]="product.quantity"
-              (input)="updateSelection(product)" min="1" />
-          </td>
-        </tr>
-        <tr *ngIf="paginatedProducts.length === 0">
-          <td colspan="6" class="text-center">No products found.</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+      <table class="table table-bordered table-hover table-sm mb-0 align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th style="width: 30px;">
+              <input type="checkbox" (change)="toggleSelectAll($event)" />
+            </th>
+            <th style="width: 50px;">Sl No</th>
+            <th>Product Name</th>
+            <th style="width: 80px;">Price</th>
+            <th style="width: 110px;">Total Remain Qty</th>
+            <th style="width: 90px;">Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of paginatedProducts; let i = index">
+            <td>
+              <input
+                type="checkbox"
+                [(ngModel)]="product.selected"
+                (change)="updateSelection(product)"
+              />
+            </td>
+            <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.price | currency:'INR':'symbol':'1.2-2' }}</td>
+            <td>{{ product.totalQty }}</td>
+            <td>
+              <input
+                type="number"
+                class="form-control form-control-sm"
+                [(ngModel)]="product.quantity"
+                (input)="updateSelection(product)"
+                min="1"
+                style="max-width: 70px;"
+              />
+            </td>
+          </tr>
+          <tr *ngIf="paginatedProducts.length === 0">
+            <td colspan="6" class="text-center py-3">No products found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Pagination Controls -->
-  <div class="modal-footer d-flex justify-content-between">
+  <div class="modal-footer d-flex justify-content-between py-2">
     <div>
-      <button class="btn btn-secondary" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+      <button
+        class="btn btn-sm btn-secondary"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)"
+      >
         Previous
       </button>
-      <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="btn btn-secondary" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+      <span class="mx-2 small">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        class="btn btn-sm btn-secondary"
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)"
+      >
         Next
       </button>
     </div>
 
     <div>
-      <button type="button" class="btn btn-success" (click)="addSelectedProducts()">Add</button>
+      <button type="button" class="btn btn-sm btn-success" (click)="addSelectedProducts()">
+        Add
+      </button>
     </div>
   </div>
 </ng-template>

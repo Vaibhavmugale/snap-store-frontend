@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProductService } from './product.service';
 import { RouterLink } from '@angular/router';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'app-product',
@@ -18,7 +18,7 @@ export class ProductComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 10;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.productService.products$.subscribe({
@@ -32,52 +32,42 @@ export class ProductComponent implements OnInit {
     });
   }
 
-  applyFilterAndPagination(): void {
-    const search = this.searchText.toLowerCase().trim();
-    const filtered = this.products.filter(product => {
-      const formattedCreatedDate = this.formatDate(product.createdDate);
-      const formattedModifiedDate = this.formatDate(product.modifiedDate);
-      return product.productName.toLowerCase().includes(search) ||
-        product.price.toString().includes(search) ||
-        product.totalQty.toString().includes(search) ||
-        product.remainingQty.toString().includes(search) ||
-        product.discount.toString().includes(search) ||
-        formattedCreatedDate.includes(search) ||
-        formattedModifiedDate.includes(search);
-    });
-
-    this.filteredProducts = this.paginate(filtered);
-  }
-
   filterProducts(): void {
     this.currentPage = 1;
     this.applyFilterAndPagination();
   }
 
+  applyFilterAndPagination(): void {
+    const filtered = this.getFilteredList();
+    this.filteredProducts = this.paginate(filtered);
+  }
+
+  getFilteredList(): any[] {
+    const search = this.searchText.toLowerCase().trim();
+    return this.products.filter(product => {
+      const created = this.formatDate(product.createdDate);
+      const modified = this.formatDate(product.modifiedDate);
+      return product.productName.toLowerCase().includes(search) ||
+        product.price.toString().includes(search) ||
+        product.discount.toString().includes(search) ||
+        product.totalQty.toString().includes(search) ||
+        product.remainingQty.toString().includes(search) ||
+        created.includes(search) ||
+        modified.includes(search);
+    });
+  }
+
   paginate(data: any[]): any[] {
-    const startIndex = this.currentPage === 1 ? 0 : 10 + (this.currentPage - 2) * 15;
-    const size = this.currentPage === 1 ? 10 : 15;
-    return data.slice(startIndex, startIndex + size);
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return data.slice(startIndex, startIndex + this.pageSize);
   }
 
   nextPage(): void {
-    const totalData = this.products.filter(product => {
-      const formattedCreatedDate = this.formatDate(product.createdDate);
-      const formattedModifiedDate = this.formatDate(product.modifiedDate);
-      const search = this.searchText.toLowerCase().trim();
-      return product.productName.toLowerCase().includes(search) ||
-        product.price.toString().includes(search) ||
-        product.totalQty.toString().includes(search) ||
-        product.remainingQty.toString().includes(search) ||
-        product.discount.toString().includes(search) ||
-        formattedCreatedDate.includes(search) ||
-        formattedModifiedDate.includes(search);
-    });
-
-    const nextStart = this.currentPage === 1 ? 10 : 10 + (this.currentPage - 1) * 15;
-    if (nextStart < totalData.length) {
+    const totalFiltered = this.getFilteredList();
+    const totalPages = Math.ceil(totalFiltered.length / this.pageSize);
+    if (this.currentPage < totalPages) {
       this.currentPage++;
-      this.filteredProducts = this.paginate(totalData);
+      this.filteredProducts = this.paginate(totalFiltered);
     }
   }
 
@@ -95,11 +85,6 @@ export class ProductComponent implements OnInit {
   }
 
   getSerialNumber(index: number): number {
-    if (this.currentPage === 1) {
-      return index + 1;
-    } else {
-      return 10 + (this.currentPage - 2) * 15 + index + 1;
-    }
+    return (this.currentPage - 1) * this.pageSize + index + 1;
   }
-
 }

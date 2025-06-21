@@ -9,6 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ProductService } from '../product/product.service';
 import { NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { CustomerMangementCreateService } from '../customer-management-create/customer-mangement-create.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-billing-mangenent-create',
@@ -38,7 +39,6 @@ export class BillingMangenentCreateComponent implements OnInit {
   totalGst = 0;
   totalQty = 0;
 
-
   constructor(
     private fb: FormBuilder,
     private createBillingService: BillingMangementCreateService,
@@ -57,9 +57,10 @@ export class BillingMangenentCreateComponent implements OnInit {
     this.customerForm = this.fb.group({
       customerName: ['', Validators.required],
       emailId: ['', [Validators.required, Validators.email]],
-      mobileNo: ['', Validators.required],
-      whatsappNo: ['', Validators.required]
+      mobileNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      whatsappNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]]
     });
+
   }
 
   ngOnInit(): void {
@@ -116,7 +117,12 @@ export class BillingMangenentCreateComponent implements OnInit {
 
   updateSelection(product: any): void {
     if (product.quantity > product.totalQty) {
-      alert("Entered quantity is more than remaining quantity.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Warning',
+        text: 'Entered quantity is more than remaining quantity.',
+        confirmButtonColor: '#3085d6'
+      });
       product.quantity = product.totalQty;
     }
 
@@ -131,7 +137,6 @@ export class BillingMangenentCreateComponent implements OnInit {
   }
 
   removeProduct(product: any): void {
-    console.log(product);
     this.selectedProducts = this.selectedProducts.filter(p => p.id !== product.id);
     product.selected = false;
     product.quantity = 0;
@@ -142,59 +147,56 @@ export class BillingMangenentCreateComponent implements OnInit {
       mainProduct.quantity = 0;
     }
   }
-onCustomerChange(customer: any) {
-  console.log(customer)
-  this.selectedCustomer = customer || null;
-}
 
-
-updateProductQuantity(product: any): void {
-  if (product.quantity <= 0) {
-    setTimeout(() => {
-      product.quantity = 1;
-      this.recalculateTotals();
-    });
-  } else {
-    this.recalculateTotals();
+  onCustomerChange(customer: any) {
+    this.selectedCustomer = customer || null;
   }
-}
 
-updateProductPrice(product: any): void {
-  if (product.price <= 0) {
-    setTimeout(() => {
-      product.price = 1;
+  updateProductQuantity(product: any): void {
+    if (product.quantity <= 0) {
+      setTimeout(() => {
+        product.quantity = 1;
+        this.recalculateTotals();
+      });
+    } else {
       this.recalculateTotals();
-    });
-  } else {
-    this.recalculateTotals();
+    }
   }
-}
+
+  updateProductPrice(product: any): void {
+    if (product.price <= 0) {
+      setTimeout(() => {
+        product.price = 1;
+        this.recalculateTotals();
+      });
+    } else {
+      this.recalculateTotals();
+    }
+  }
 
   recalculateTotals(): void {
-  this.totalAmount = 0;
-  this.totalGst = 0;
-  this.totalDisc = 0;
-  this.totalQty = 0;
+    this.totalAmount = 0;
+    this.totalGst = 0;
+    this.totalDisc = 0;
+    this.totalQty = 0;
 
-  this.selectedProducts.forEach(product => {
-    const baseTotal = product.price * product.quantity;
-    const discount = product.discount || 0;
-    const discountedAmount = baseTotal * (discount / 100);
-    const afterDiscount = baseTotal - discountedAmount;
-    const gst = product.gst || 0;
-    const gstAmount = afterDiscount * (gst / 100);
-    const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
-    const quantity = product.quantity || 0;
-    product.total = total;
+    this.selectedProducts.forEach(product => {
+      const baseTotal = product.price * product.quantity;
+      const discount = product.discount || 0;
+      const discountedAmount = baseTotal * (discount / 100);
+      const afterDiscount = baseTotal - discountedAmount;
+      const gst = product.gst || 0;
+      const gstAmount = afterDiscount * (gst / 100);
+      const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
+      const quantity = product.quantity || 0;
+      product.total = total;
 
-    this.totalAmount = parseFloat((this.totalAmount + total).toFixed(2));
-    this.totalGst = parseFloat((this.totalGst + gstAmount).toFixed(2));
-    this.totalDisc = parseFloat((this.totalDisc + discountedAmount).toFixed(2));
-    this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
-  });
-}
-
-
+      this.totalAmount = parseFloat((this.totalAmount + total).toFixed(2));
+      this.totalGst = parseFloat((this.totalGst + gstAmount).toFixed(2));
+      this.totalDisc = parseFloat((this.totalDisc + discountedAmount).toFixed(2));
+      this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
+    });
+  }
 
   toggleSelectAll(event: any): void {
     const isChecked = event.target.checked;
@@ -216,7 +218,6 @@ updateProductPrice(product: any): void {
       quantity: entry.quantity
     }));
 
-    console.log("this.selectedProducts", this.selectedProducts);
     this.totalAmount = 0;
     this.totalGst = 0;
     this.totalDisc = 0;
@@ -232,20 +233,15 @@ updateProductPrice(product: any): void {
       const total = parseFloat((afterDiscount + gstAmount).toFixed(2));
       product.total = total;
       const quantity = product.quantity || 0;
-      
+
       this.totalAmount = parseFloat((total + this.totalAmount).toFixed(2));
       this.totalGst = parseFloat((gstAmount + this.totalGst).toFixed(2));
       this.totalDisc = parseFloat((discountedAmount + this.totalDisc).toFixed(2));
       this.totalQty = parseFloat((this.totalQty + quantity).toFixed(2));
-
-      console.log(product);
     });
 
     this.modalRef.close();
   }
-
-
-
 
   filterProducts(): void {
     const search = this.searchText.toLowerCase().trim();
@@ -259,7 +255,6 @@ updateProductPrice(product: any): void {
     this.updateTotalPages();
   }
 
-
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -272,10 +267,14 @@ updateProductPrice(product: any): void {
     return this.filteredProducts.slice(startIndex, endIndex);
   }
 
-
-
   selectProduct(product: any): void {
-    alert(`Product Selected: ${product.productName}`);
+    Swal.fire({
+      icon: 'info',
+      title: 'Product Selected',
+      text: `Product Selected: ${product.productName}`,
+      timer: 1500,
+      showConfirmButton: false
+    });
     this.modalRef.close();
   }
 
@@ -284,57 +283,80 @@ updateProductPrice(product: any): void {
   }
 
   saveCustomer(): void {
-    if (this.customerForm.invalid) {
-      return;
-    }
+  if (this.customerForm.invalid) {
+    return;
+  }
 
-    const data = this.customerForm.getRawValue();
-    data.userId = this.userId;
+  const data = this.customerForm.getRawValue();
+  data.userId = this.userId;
 
-    this.createCustomerService.addCustomer(data).subscribe({
-      next: (response) => {
-        alert("Customer added successfully!");
+  this.createCustomerService.addCustomer(data).subscribe({
+    next: (response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Customer added successfully!',
+        confirmButtonColor: '#3085d6'
+      });
 
-        if (this.modalRef) {
-          this.modalRef.close();
+      if (this.modalRef) {
+        this.modalRef.close();
+      }
+
+      this.getCustomerService.fetchCustomer().subscribe(resp => {
+        this.customers = resp;
+
+        this.selectedCustomer = this.customers.find(e =>
+          e.customerName.trim() === data.customerName.trim()
+        );
+        
+        if (this.selectedCustomer) {
+          this.billingForm.get('customerId')?.setValue(this.selectedCustomer.id);
         }
+      });
+    },
 
-        this.getCustomerService.fetchCustomer().subscribe(resp => {
-          this.customers = resp;
+    error: (error) => {
+      console.error("Error adding customer:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to add customer. Please try again.',
+        confirmButtonColor: '#d33'
+      });
+    }
+  });
+}
 
-          this.selectedCustomer = this.customers.find(e =>
-            e.customerName.trim() === data.customerName.trim()
-          );
+
+  saveBilling(): void {
+    const data = this.billingForm.getRawValue();
+    data.totalAmount = this.totalAmount;
+    data.totalGst = this.totalGst;
+    data.totalDisc = this.totalDisc;
+    data.totalQty = this.totalQty;
+    data.selectedProducts = this.selectedProducts;
+
+    this.createBillingService.addBilling(data).subscribe({
+      next: (response) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Billing created successfully!',
+          confirmButtonColor: '#3085d6'
+        }).then(() => {
+          this.router.navigateByUrl('/billing');
         });
       },
 
       error: (error) => {
-        console.error("Error adding customer:", error);
-        alert("Failed to add customer. Please try again.");
-      }
-    });
-  }
-
-  saveBilling(): void {
-
-
-    const data = this.billingForm.getRawValue();
-    console.log("first", data)
-    data.totalAmount = this.totalAmount;
-    data.totalGst = this.totalGst;
-    data.totalDisc = this.totalDisc;
-     data.totalQty = this.totalQty;
-    // data.customerId = this.selectedCustomer[0].id;
-    data.selectedProducts = this.selectedProducts;
-    console.log("sec", data)
-     this.createBillingService.addBilling(data).subscribe({
-      next: (response) => {
-        alert("billing created successfully!");
-      },
-
-      error: (error) => {
         console.error("Error create billing:", error);
-        alert("Failed to create billing. Please try again.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create billing. Please try again.',
+          confirmButtonColor: '#d33'
+        });
       }
     });
   }
