@@ -1,122 +1,160 @@
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
+body, html {
+  height: 100%;
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background-color: #f0f2f5;
 }
 
+/* Center container for large screens */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  padding: 20px;
 }
 
+/* Login Box */
 .login-box {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 100%;
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
 }
 
+/* Header */
 h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+  font-weight: 600;
 }
 
+/* Input Fields */
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .input-group label {
   font-size: 14px;
-  color: #666;
+  color: #555;
 }
 
 .input-group input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 6px;
   font-size: 14px;
+  transition: border-color 0.3s ease;
 }
 
 .input-group input:focus {
-  border-color: #3498db;
+  border-color: #007bff;
   outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
+/* Error */
 .error-message {
-  color: red;
+  color: #d63031;
   font-size: 12px;
   margin-top: 5px;
 }
 
-.submit-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #3498db;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.submit-btn:hover {
-  background-color: #2980b9;
-}
-
-.forgot-password {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.forgot-password a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.forgot-password a:hover {
-  text-decoration: underline;
-}
-
-.signup-link {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.signup-link a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.signup-link a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 480px) {
-  .login-box {
-    padding: 20px;
-  }
-}
+/* Checkbox */
 .checkbox-group {
   display: flex;
   align-items: center;
-  margin-top: -10px;
+  font-size: 13px;
+  color: #555;
+  margin-top: -8px;
+  margin-bottom: 16px;
 }
 
 .checkbox-group input {
-  margin-right: 5px;
+  margin-right: 6px;
+}
+
+/* Button */
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submit-btn:disabled {
+  background-color: #9ea4f2;
+  cursor: not-allowed;
+}
+
+/* ✅ Snackbar styles */
+.custom-snackbar-success {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 8px;
+  border-left: 5px solid #2e7d32;
+  padding-right: 16px;
+}
+
+.custom-snackbar-error {
+  background-color: #fdecea !important;
+  color: #c62828 !important;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 8px;
+  border-left: 5px solid #c62828;
+  padding-right: 16px;
+}
+
+.mat-snack-bar-container .mat-button-wrapper {
+  color: inherit;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 0 10px;
+}
+
+/* 📱 Mobile fix */
+@media (max-width: 480px) {
+  .container {
+    align-items: flex-start;
+    padding-top: 40px;
+    height: auto;
+  }
+
+  .login-box {
+    padding: 24px;
+    box-shadow: none;
+    border-radius: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .submit-btn {
+    font-size: 14px;
+  }
 }

@@ -1,35 +1,79 @@
-/* body {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
+.dashboard-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #343a40;
-    color: white;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.welcome {
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    display: block;
-    border-radius: 5px;
+.welcome h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
 }
 
-.sidebar a:hover {
-    background: #495057;
+.welcome span {
+  color: #ffd43b;
 }
 
-.content {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-    height: 100vh;
-} */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.3s ease;
+  border-top: 4px solid transparent;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card .icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.dashboard-card h4 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #333;
+}
+
+.dashboard-card p {
+  font-size: 22px;
+  font-weight: bold;
+  color: #4e54c8;
+}
+
+/* Colored top borders */
+.dashboard-card.product {
+  border-top-color: #0d6efd;
+}
+
+.dashboard-card.customer {
+  border-top-color: #20c997;
+}
+
+.dashboard-card.bill {
+  border-top-color: #ffc107;
+}
+
+.dashboard-card.user {
+  border-top-color: #fd7e14;
+}

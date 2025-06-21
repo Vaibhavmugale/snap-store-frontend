@@ -1,21 +1,33 @@
-<div class="perent">
-    <div class="sidebar">
-        <div>
-            <h4>Snap Store</h4>
-            <a routerLink="/dashboard">Home</a>
-            <a routerLink="/product">Product</a>
-            <a routerLink="/billing">Billing Management</a>
-            <a routerLink="/customer">Customer Management</a>
-            <a routerLink="/user">User</a>
-        </div>
-        <div>
-            <p *ngIf="userName">Logged in as: <strong>{{ userName }}</strong></p>
-            <button (click)="logOut()" class="btn btn-danger w-100">Log Off</button>
-        </div>
+<div class="parent">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.open]="isSidebarOpen">
+    <div>
+      <h4>Snap Store</h4>
+      <a routerLink="/dashboard" (click)="closeSidebar()">Home</a>
+      <a routerLink="/product" (click)="closeSidebar()">Product</a>
+      <a routerLink="/billing" (click)="closeSidebar()">Billing Management</a>
+      <a routerLink="/customer" (click)="closeSidebar()">Customer Management</a>
+      <a routerLink="/user" (click)="closeSidebar()">User</a>
     </div>
-    <div class="content">
-        <div class="container mt-4">
-            <router-outlet></router-outlet>
-        </div>
+    <div class="sidebar-footer">
+      <p *ngIf="userName">Logged in as: <strong>{{ userName }}</strong></p>
+      <button (click)="logOut()" class="btn btn-danger w-100">Log Off</button>
     </div>
+  </div>
+
+  <!-- Backdrop for mobile view -->
+  <div class="backdrop" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <!-- Mobile header -->
+    <div class="mobile-header">
+      <button class="hamburger" (click)="toggleSidebar()">☰</button>
+      <h4>Snap Store</h4>
+    </div>
+
+    <div class="container mt-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>

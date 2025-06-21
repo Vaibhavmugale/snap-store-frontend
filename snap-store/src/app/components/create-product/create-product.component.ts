@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateProductService } from './create-product.service';
 import { Product } from './create-product.module';
-import { Router} from '@angular/router';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-create-product',
@@ -14,7 +15,8 @@ import { Router} from '@angular/router';
 export class CreateProductComponent implements OnInit {
   productForm!: FormGroup;
   productData!: Product;
-  userId:number=0;
+  userId: number = 0;
+  pageType: String = "";
 
   constructor(
     private fb: FormBuilder,
@@ -31,9 +33,11 @@ export class CreateProductComponent implements OnInit {
   ngOnInit(): void {
     this.createProductService.getProductObservable().subscribe(data => {
       if (data === false) {
+        this.pageType = "New";
         this.createForm(new Product());
       } else {
         this.productData = data;
+        this.pageType = "Edit";
         this.createForm(this.productData);
       }
     });
@@ -44,9 +48,9 @@ export class CreateProductComponent implements OnInit {
       id: [product.id],
       productName: [product.productName, Validators.required],
       description: [product.description],
-      barcode: [product.barcode],
+      mrp: [product.mrp, [Validators.required, Validators.min(0)]],
       expireDate: [this.convertToDate(product.expireDate)],
-    manufactureDate: [this.convertToDate(product.manufactureDate)],
+      manufactureDate: [this.convertToDate(product.manufactureDate)],
       price: [product.price, [Validators.required, Validators.min(0)]],
       discount: [product.discount],
       gst: [product.gst],
@@ -57,33 +61,62 @@ export class CreateProductComponent implements OnInit {
       companyId: [product.companyId || 1],
       createdDate: [product.createdDate || '']
     });
-}
-
-private convertToDate(dateString: string | null): string | null {
-  return dateString ? new Date(dateString).toISOString().split('T')[0] : null;
-}
-
-
-onSubmit(): void {
-  if (this.productForm.invalid) {
-    console.warn("Form is invalid. Please check required fields.");
-    return;
   }
 
-  const data = this.productForm.getRawValue();
-  data.userId=this.userId;
-  
-  this.createProductService.addProduct(data).subscribe({
-    next: (response) => {
-      alert("Product added successfully!");
-      this.router.navigateByUrl("/product");
-    },
+  private convertToDate(dateString: string | null): string | null {
+    return dateString ? new Date(dateString).toISOString().split('T')[0] : null;
+  }
 
-    error: (error) => {
-      console.error("Error adding product:", error);
-      alert("Failed to add product. Please try again.");
+
+  onSubmit(): void {
+    if (this.productForm.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Form Incomplete',
+        text: 'Please fill all required fields.',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
     }
-  });
-}
+
+    const data = this.productForm.getRawValue();
+    data.userId = this.userId;
+
+    if(this.pageType === 'New'){
+      data.remainingQty = data.totalQty;
+    }
+
+    this.createProductService.addProduct(data).subscribe({
+      next: () => {
+        const action = this.pageType === 'New' ? 'added' : 'updated';
+        Swal.fire({
+          icon: 'success',
+          title: `Product ${action} successfully!`,
+          confirmButtonColor: '#28a745'
+        }).then(() => {
+          this.router.navigateByUrl('/product');
+        });
+      },
+      error: (error) => {
+        console.error("Error saving product:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#dc3545'
+        });
+      }
+    });
+  }
+  isFormValid(): boolean {
+    const form = this.productForm;
+    return form.valid &&
+      !!form.get('productName')?.value?.trim() &&
+      form.get('mrp')?.value > 0 &&
+      form.get('price')?.value > 0 &&
+      form.get('totalQty')?.value > 0;
+  }
+
+
 
 }

@@ -11,7 +11,8 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 })
 export class HeaderComponent {
   userName: string | null = null;
-  userType: number =0;
+  userType: number = 0;
+  isSidebarOpen = false;
 
   constructor(private router: Router) {}
 
@@ -26,7 +27,6 @@ export class HeaderComponent {
         const parsedUser = JSON.parse(user);
         this.userName = parsedUser.userName;
         this.userType = parsedUser.usertype;
-        console.log(this.userType)
       } catch (error) {
         console.error("Error parsing user data:", error);
       }
@@ -37,5 +37,13 @@ export class HeaderComponent {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar() {
+    this.isSidebarOpen = false;
   }
 }
