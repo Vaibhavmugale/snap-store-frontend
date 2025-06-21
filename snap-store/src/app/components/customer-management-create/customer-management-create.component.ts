@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CustomerMangementCreateService } from './customer-mangement-create.service';
 import { Customer } from './customer-management-create.module';
 import Swal from 'sweetalert2';
+import { CustomerManagementService } from '../customer-management/customer-management.service';
 
 @Component({
   selector: 'app-customer-management-create',
@@ -19,11 +20,13 @@ export class CustomerManagementCreateComponent implements OnInit {
   customerData!: Customer;
   userId: number = 0;
   isEdit: string = '';
+  custList: Customer[] = [];
 
   constructor(
     private fb: FormBuilder,
     private createCustomerService: CustomerMangementCreateService,
-    private router: Router
+    private router: Router,
+    private _CustomersService: CustomerManagementService
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -37,6 +40,9 @@ export class CustomerManagementCreateComponent implements OnInit {
       if (data === false) {
         this.createForm(new Customer());
         this.isEdit = 'new';
+        this._CustomersService.fetchCustomer().subscribe(customers => {
+          this.custList = customers;
+        });
       } else {
         this.customerData = data;
         this.isEdit = 'edit';
@@ -46,31 +52,31 @@ export class CustomerManagementCreateComponent implements OnInit {
   }
 
   createForm(customer: Customer): void {
-this.customerForm = this.fb.group({
-  id: [customer.id],
-  customerName: [customer.customerName, Validators.required],
-  emailId: [customer.emailId, [Validators.required, Validators.email]],
-  mobileNo: [
-    customer.mobileNo,
-    [
-      Validators.required,
-      Validators.pattern(/^[0-9]+$/),
-      Validators.minLength(10),
-      Validators.maxLength(10)
-    ]
-  ],
-  whatsappNo: [
-    customer.whatsappNo,
-    [
-      Validators.required,
-      Validators.pattern(/^[0-9]+$/),
-      Validators.minLength(10),
-      Validators.maxLength(10)
-    ]
-  ],
-  createdBy: [customer.createdBy || 1],
-  createdDate: [customer.createdDate || '']
-});
+    this.customerForm = this.fb.group({
+      id: [customer.id],
+      customerName: [customer.customerName, Validators.required],
+      emailId: [customer.emailId, [Validators.required, Validators.email]],
+      mobileNo: [
+        customer.mobileNo,
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9]+$/),
+          Validators.minLength(10),
+          Validators.maxLength(10)
+        ]
+      ],
+      whatsappNo: [
+        customer.whatsappNo,
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9]+$/),
+          Validators.minLength(10),
+          Validators.maxLength(10)
+        ]
+      ],
+      createdBy: [customer.createdBy || 1],
+      createdDate: [customer.createdDate || '']
+    });
 
   }
 
@@ -87,6 +93,16 @@ this.customerForm = this.fb.group({
 
     const data = this.customerForm.getRawValue();
     data.userId = this.userId;
+
+    if (this.isEdit === 'new' && this.isDuplicateCustomer(data.customerName)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: 'Duplicate Customer Found. Please check.',
+        confirmButtonColor: '#dc3545'
+      });
+      return; // stop creation
+    }
 
     this.createCustomerService.addCustomer(data).subscribe({
       next: () => {
@@ -109,5 +125,10 @@ this.customerForm = this.fb.group({
         });
       }
     });
+  }
+  isDuplicateCustomer(name: string): boolean {
+    return this.custList.some(customer =>
+      customer.customerName?.trim().toLowerCase() === name?.trim().toLowerCase()
+    );
   }
 }

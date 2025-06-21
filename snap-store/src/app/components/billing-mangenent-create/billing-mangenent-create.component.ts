@@ -108,7 +108,7 @@ export class BillingMangenentCreateComponent implements OnInit {
   }
 
   updateSelection(product: any): void {
-    if (product.quantity > product.remainingQty || product.remainingQty===0) {
+    if (product.quantity > product.remainingQty || product.remainingQty === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Warning',
@@ -118,20 +118,20 @@ export class BillingMangenentCreateComponent implements OnInit {
       product.quantity = 0;
       product.selected = false;
     } else {
-      if (product?.selected  && product.remainingQty > 0) {
+      if (product?.selected && product.remainingQty > 0) {
         product.selected = true;
         product.quantity = 1;
         this.selectedProductsSet.add(product);
       } else {
         this.selectedProductsSet.delete(product);
-         product.quantity = 0;
-          product.selected = false;
+        product.quantity = 0;
+        product.selected = false;
       }
     }
   }
 
-   updateEnter(product: any): void {
-    if (product.quantity > product.remainingQty  || product.remainingQty===0) {
+  updateEnter(product: any): void {
+    if (product.quantity > product.remainingQty || product.remainingQty === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Warning',
@@ -140,7 +140,7 @@ export class BillingMangenentCreateComponent implements OnInit {
       });
       product.quantity = 0;
     } else {
-      if (!product?.selected  && product.remainingQty > 0) {
+      if (!product?.selected && product.remainingQty > 0) {
         product.selected = true;
         this.selectedProductsSet.add(product);
       }
@@ -244,6 +244,17 @@ export class BillingMangenentCreateComponent implements OnInit {
     const data = this.customerForm.getRawValue();
     data.userId = this.userId;
 
+    const found = this.customers.find(c => c.customerName.trim().toLowerCase() === data.customerName.trim().toLowerCase());
+    if (found) {
+      this.selectedCustomer = found;
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: 'Duplicate Customer Found. Please check.',
+        confirmButtonColor: '#dc3545'
+      });
+      return;
+    }
     this.createCustomerService.addCustomer(data).subscribe({
       next: (response) => {
         Swal.fire({

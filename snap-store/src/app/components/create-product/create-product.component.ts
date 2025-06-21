@@ -5,6 +5,7 @@ import { CreateProductService } from './create-product.service';
 import { Product } from './create-product.module';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { ProductService } from '../product/product.service';
 
 @Component({
   selector: 'app-create-product',
@@ -17,11 +18,14 @@ export class CreateProductComponent implements OnInit {
   productData!: Product;
   userId: number = 0;
   pageType: String = "";
+  productList: Product[] = [];
+
 
   constructor(
     private fb: FormBuilder,
     private createProductService: CreateProductService,
-    private router: Router
+    private router: Router,
+    private productService: ProductService
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -35,6 +39,9 @@ export class CreateProductComponent implements OnInit {
       if (data === false) {
         this.pageType = "New";
         this.createForm(new Product());
+        this.productService.fetchProducts().subscribe(products => {
+          this.productList = products;
+        });
       } else {
         this.productData = data;
         this.pageType = "Edit";
@@ -83,13 +90,22 @@ export class CreateProductComponent implements OnInit {
     const data = this.productForm.getRawValue();
     data.userId = this.userId;
 
-    if(this.pageType === 'New'){
+    if (this.pageType === 'New') {
       data.remainingQty = data.totalQty;
-    }else{
-      if(data.updateQty){
-        data.remainingQty=data.updateQty+data.remainingQty;
-        data.totalQty=data.updateQty+data.totalQty;
+    } else {
+      if (data.updateQty) {
+        data.remainingQty = data.updateQty + data.remainingQty;
+        data.totalQty = data.updateQty + data.totalQty;
       }
+    }
+    if (this.pageType === 'New' && this.isDuplicateProduct(data.productName)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: 'Duplicate Product Found. Please check.',
+        confirmButtonColor: '#dc3545'
+      });
+      return; // stop creation
     }
 
     this.createProductService.addProduct(data).subscribe({
@@ -123,6 +139,9 @@ export class CreateProductComponent implements OnInit {
       form.get('totalQty')?.value > 0;
   }
 
-
-
+  isDuplicateProduct(name: string): boolean {
+    return this.productList.some(product =>
+      product.productName?.trim().toLowerCase() === name?.trim().toLowerCase()
+    );
+  }
 }
