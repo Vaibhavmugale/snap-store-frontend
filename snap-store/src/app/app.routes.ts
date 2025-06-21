@@ -21,6 +21,7 @@ import { BillingMangementCreateService } from './components/billing-mangenent-cr
 import { BillingMangenentCreateComponent } from './components/billing-mangenent-create/billing-mangenent-create.component';
 import { BillingViewService } from './components/billing-view/billing-view.service';
 import { BillingViewComponent } from './components/billing-view/billing-view.component';
+import { DashboardService } from './dashboard/dashboard.service';
 
 export const routes: Routes = [
   {   
@@ -39,7 +40,10 @@ export const routes: Routes = [
       {
         path: 'dashboard', 
         component: DashboardComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        resolve: { 
+          products: DashboardService
+        }
       },
       {
         path: 'product', 
