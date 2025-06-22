@@ -44,19 +44,32 @@ Snapstore is a full-stack web application designed to simplify billing, customer
 ## 🖼 Screenshots
 
 ### 📋 Billing Page
-![Billing Page](./screenshots/billing-page.png)
+<img width="1710" alt="Screenshot 2025-06-22 at 4 01 43 PM" src="https://github.com/user-attachments/assets/ca582f83-36ec-4958-9773-7b18e282965f" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 02 16 PM" src="https://github.com/user-attachments/assets/6a186e3d-3c95-4b49-a76a-dfaac5fbc71b" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 02 28 PM" src="https://github.com/user-attachments/assets/f4306835-7562-41cf-9724-546d3127f2c3" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 02 55 PM" src="https://github.com/user-attachments/assets/c90e95de-bacb-4c59-a3ef-6320df304fc6" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 03 10 PM" src="https://github.com/user-attachments/assets/e8fd964d-d0dd-4a9e-9ec4-04d1f766fa51" />
+
 
 ### 📦 Product List
-![Product List](./screenshots/product-list.png)
+<img width="1710" alt="Screenshot 2025-06-22 at 3 59 22 PM" src="https://github.com/user-attachments/assets/6c8bd030-f524-4dbc-a983-c0d2d28c2309" />
+<img width="1710" alt="Screenshot 2025-06-22 at 3 59 34 PM" src="https://github.com/user-attachments/assets/888b0583-9794-429d-9ad1-8f73899bb6c4" />
+<img width="1710" alt="Screenshot 2025-06-22 at 3 59 44 PM" src="https://github.com/user-attachments/assets/85259f9c-18a5-4b6b-a062-f36c4caf1b2e" />
+
 
 ### 👤 Customer Form
-![Customer Form](./screenshots/customer-form.png)
+<img width="1710" alt="Screenshot 2025-06-22 at 4 00 33 PM" src="https://github.com/user-attachments/assets/3cd081a7-d3a4-4282-8020-22e6942a54e7" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 01 11 PM" src="https://github.com/user-attachments/assets/55141b86-7651-441d-8c26-cc79defb6647" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 01 24 PM" src="https://github.com/user-attachments/assets/946bd5fe-2231-46cd-b31d-6d222396a372" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 02 02 PM" src="https://github.com/user-attachments/assets/82304b7a-6225-4a45-9938-d3564c0d9ea2" />
+
+
 
 ### 📈 Report Export
-![Report Export](./screenshots/report-export.png)
+<img width="1710" alt="Screenshot 2025-06-22 at 4 03 20 PM" src="https://github.com/user-attachments/assets/08d6e49e-3547-4290-9756-5dabff006fac" />
+<img width="1302" alt="Screenshot 2025-06-22 at 4 05 17 PM" src="https://github.com/user-attachments/assets/3c477566-f114-42f3-b7c4-55f52e1c0c89" />
 
 ---
-
 ## 🛠️ Tech Stack
 
 ### Frontend
