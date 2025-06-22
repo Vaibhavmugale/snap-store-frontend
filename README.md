@@ -58,9 +58,8 @@ Snapstore is a full-stack web application designed to simplify billing, customer
 
 
 ### 👤 Customer Form
-<img width="1710" alt="Screenshot 2025-06-22 at 4 00 33 PM" src="https://github.com/user-attachments/assets/3cd081a7-d3a4-4282-8020-22e6942a54e7" />
-<img width="1710" alt="Screenshot 2025-06-22 at 4 01 11 PM" src="https://github.com/user-attachments/assets/55141b86-7651-441d-8c26-cc79defb6647" />
-<img width="1710" alt="Screenshot 2025-06-22 at 4 01 24 PM" src="https://github.com/user-attachments/assets/946bd5fe-2231-46cd-b31d-6d222396a372" />
+<img width="1710" alt="Screenshot 2025-06-22 at 3 59 59 PM" src="https://github.com/user-attachments/assets/a135ebbe-95eb-4d17-aa3c-71a493e34d79" />
+<img width="1710" alt="Screenshot 2025-06-22 at 4 00 11 PM" src="https://github.com/user-attachments/assets/86155c79-58fc-4955-bddd-1d41e5f92e7e" />
 <img width="1710" alt="Screenshot 2025-06-22 at 4 02 02 PM" src="https://github.com/user-attachments/assets/82304b7a-6225-4a45-9938-d3564c0d9ea2" />
 
 
