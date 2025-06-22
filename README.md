@@ -3,7 +3,7 @@
 
 Snapstore is a full-stack web application designed to simplify billing, customer tracking, and inventory management for general stores, supermarkets, or any small-to-medium retail business.
 
-[![Snapstore Dashboard](./screenshots/dashboard.png)](https://github.com/user-attachments/assets/cbbfb754-8c5b-4483-8dfe-2316739d949b)
+https://github.com/user-attachments/assets/cbbfb754-8c5b-4483-8dfe-2316739d949b
 
 ---
 
