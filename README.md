@@ -2,8 +2,8 @@
 # 🧾 Snapstore - Billing & Inventory Management System
 
 Snapstore is a full-stack web application designed to simplify billing, customer tracking, and inventory management for general stores, supermarkets, or any small-to-medium retail business.
-
-https://github.com/user-attachments/assets/cbbfb754-8c5b-4483-8dfe-2316739d949b
+[
+https://github.com/user-attachments/assets/cbbfb754-8c5b-4483-8dfe-2316739d949b](https://github-production-user-asset-6210df.s3.amazonaws.com/114973368/457639940-123edbdf-97c1-4794-bbbd-800cacc3d7e9.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250622%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250622T104241Z&X-Amz-Expires=300&X-Amz-Signature=7c8b95b8ce8a2ff09505e0be25643f5e4abed67e41c585a14c3de79832200447&X-Amz-SignedHeaders=host)
 
 ---
 
