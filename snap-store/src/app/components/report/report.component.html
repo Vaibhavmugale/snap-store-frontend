@@ -1,0 +1,50 @@
+<div class="report-container">
+  <h3>📄 Generate Report</h3>
+
+  <form [formGroup]="reportForm" (ngSubmit)="generateReport()" class="report-form">
+
+    <!-- From Date -->
+    <div class="form-group">
+      <label for="fromDate" class="form-label">From Date:</label>
+      <input type="date" class="form-control" id="fromDate" formControlName="fromDate" />
+    </div>
+
+    <!-- To Date -->
+    <div class="form-group">
+      <label for="toDate" class="form-label">To Date:</label>
+      <input type="date" class="form-control" id="toDate" formControlName="toDate" />
+    </div>
+
+    <!-- Select Customer Dropdown -->
+    <div class="form-group">
+      <label for="customerId" class="form-label">Select Customer</label>
+      <ng-select
+        [items]="customers"
+        bindLabel="customerName"
+        formControlName="customerId"
+        bindValue="id"
+        [searchable]="true"
+        class="form-select-custom w-100">
+      </ng-select>
+    </div>
+
+    <!-- Select Product Dropdown -->
+    <div class="form-group">
+      <label for="productId" class="form-label">Select Product</label>
+      <ng-select
+        [items]="products"
+        bindLabel="productName"
+        formControlName="productId"
+        bindValue="id"
+        [searchable]="true"
+        class="form-select-custom w-100">
+      </ng-select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group full-width text-center">
+      <button type="submit" class="btn btn-success">⬇️ Download Report</button>
+    </div>
+
+  </form>
+</div>

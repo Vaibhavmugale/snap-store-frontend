@@ -21,6 +21,7 @@ import { BillingMangenentCreateComponent } from './components/billing-mangenent-
 import { BillingViewService } from './components/billing-view/billing-view.service';
 import { BillingViewComponent } from './components/billing-view/billing-view.component';
 import { DashboardService } from './dashboard/dashboard.service';
+import { ReportComponent } from './components/report/report.component';
 
 export const routes: Routes = [
   {   
@@ -112,6 +113,11 @@ export const routes: Routes = [
         resolve: { 
           users: UsersService
         }
+      },
+      {
+        path: 'report',
+        component: ReportComponent, 
+        canActivate: [AuthGuard],
       }
     ]
   }
